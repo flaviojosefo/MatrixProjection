@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace MatrixProjection {
 
-    class Program {
+    class Draw {
 
-        static void Main(string[] args) {
-
-            Draw draw = new Draw();
-        }
+        public Draw() { }
     }
 }
