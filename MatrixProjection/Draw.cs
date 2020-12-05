@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MatrixProjection {
 
-    class Draw {
+    public class Draw {
 
         public Draw() { }
     }
