@@ -12,7 +12,11 @@ namespace MatrixProjection {
 
             Draw draw = new Draw(120, 50, false);
 
-            Vector v1 = new Vector(1, 0, 2);
+            Vector v1 = new Vector(0, 0, 0);
+            Vector v2 = new Vector(5, 5, 0); 
+            Vector v3 = new Vector(5, -5, 0);
+            Vector v4 = new Vector(-5, -5, 0);
+            Vector v5 = new Vector(-5, 5, 0);
 
             Matrix3D m1 = new Matrix3D() {
 
@@ -23,9 +27,15 @@ namespace MatrixProjection {
                 }
             };
 
-            Console.WriteLine(v1);
-            Console.WriteLine();
-            Console.WriteLine(m1);
+            //Console.WriteLine(v1);
+            //Console.WriteLine();
+            //Console.WriteLine(m1);
+
+            draw.DrawPoint(v1);
+            draw.DrawPoint(v2);
+            draw.DrawPoint(v3);
+            draw.DrawPoint(v4);
+            draw.DrawPoint(v5);
 
             Console.ReadKey();
         }

@@ -8,18 +8,20 @@ namespace MatrixProjection {
 
     public struct Vector {
 
-        private float x, y, z;
+        public float X { get; private set; }
+        public float Y { get; private set; }
+        public float Z { get; private set; }
 
         public Vector (float x, float y, float z = 0) {
 
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            X = x;
+            Y = y;
+            Z = z;
         }
 
         public override string ToString() {
 
-            return $"({x},{y},{z})"; // · -> Vector Representation
+            return $"({X},{Y},{Z})";
         }
     }
 }
