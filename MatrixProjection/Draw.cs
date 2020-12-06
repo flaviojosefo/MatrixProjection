@@ -8,6 +8,20 @@ namespace MatrixProjection {
 
     public class Draw {
 
-        public Draw() { }
+        private int consoleX, consoleY;
+
+        public Draw(int x, int y, bool cursor) {
+
+            consoleX = x;
+            consoleY = y;
+
+            Console.WindowWidth = consoleX;
+            Console.WindowHeight = consoleY;
+
+            Console.BufferWidth = consoleX;
+            Console.BufferHeight = consoleY;
+
+            Console.CursorVisible = cursor;
+        }
     }
 }

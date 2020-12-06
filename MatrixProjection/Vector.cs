@@ -19,7 +19,7 @@ namespace MatrixProjection {
 
         public override string ToString() {
 
-            return $"({x},{y},{z})";
+            return $"({x},{y},{z})"; // · -> Vector Representation
         }
     }
 }

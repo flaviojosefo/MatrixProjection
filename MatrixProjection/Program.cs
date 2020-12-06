@@ -10,7 +10,7 @@ namespace MatrixProjection {
 
         static void Main(string[] args) {
 
-            Draw draw = new Draw();
+            Draw draw = new Draw(120, 50, false);
 
             Vector v1 = new Vector(1, 0, 2);
 
