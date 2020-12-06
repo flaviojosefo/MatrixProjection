@@ -14,7 +14,19 @@ namespace MatrixProjection {
 
             Vector v1 = new Vector(1, 0, 2);
 
+            Matrix3D m1 = new Matrix3D() {
+
+                Matrix = new float[3, 3] {
+                    {1, 0, 0},
+                    {0, 1, 0},
+                    {0, 0, 1}
+                }
+            };
+
             Console.WriteLine(v1);
+            Console.WriteLine();
+            Console.WriteLine(m1);
+
             Console.ReadKey();
         }
     }

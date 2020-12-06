@@ -8,7 +8,7 @@ namespace MatrixProjection {
 
     public struct Vector {
 
-        float x, y, z;
+        private float x, y, z;
 
         public Vector (float x, float y, float z = 0) {
 
