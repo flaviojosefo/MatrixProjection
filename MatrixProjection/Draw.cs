@@ -44,10 +44,6 @@ namespace MatrixProjection {
 
                 DrawPoint(from += line);
             }
-
-            // 1. Subtract 'v2' by 'v1'
-            // 2. Divide new Vector by 'step'
-            // 3. Add newer, smaller Vector with 'v1' 'step' times; DrawPoint() after every addition
         }
 
         private bool OutOfBounds() {

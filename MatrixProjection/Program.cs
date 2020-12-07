@@ -21,9 +21,18 @@ namespace MatrixProjection {
             Matrix3D m1 = new Matrix3D() {
 
                 Matrix = new float[3, 3] {
-                    {1, 0, 0},
+                    {1, 2, 1},
                     {0, 1, 0},
-                    {0, 0, 1}
+                    {2, 3, 4}
+                }
+            };
+
+            Matrix3D m2 = new Matrix3D() {
+
+                Matrix = new float[3, 2] {
+                    {2, 5},
+                    {6, 7},
+                    {1, 8}
                 }
             };
 
@@ -37,8 +46,10 @@ namespace MatrixProjection {
             //draw.DrawPoint(v4);
             //draw.DrawPoint(v5);
 
-            draw.DrawLine(v2, v4);
-            draw.DrawLine(v3, v5);
+            //draw.DrawLine(v2, v4);
+            //draw.DrawLine(v3, v5);
+
+            Console.WriteLine(Matrix3D.MatMul(m1, m2));
 
             Console.ReadKey();
         }
