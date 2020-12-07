@@ -31,11 +31,14 @@ namespace MatrixProjection {
             //Console.WriteLine();
             //Console.WriteLine(m1);
 
-            draw.DrawPoint(v1);
-            draw.DrawPoint(v2);
-            draw.DrawPoint(v3);
-            draw.DrawPoint(v4);
-            draw.DrawPoint(v5);
+            //draw.DrawPoint(v1);
+            //draw.DrawPoint(v2);
+            //draw.DrawPoint(v3);
+            //draw.DrawPoint(v4);
+            //draw.DrawPoint(v5);
+
+            draw.DrawLine(v2, v4);
+            draw.DrawLine(v3, v5);
 
             Console.ReadKey();
         }

@@ -28,13 +28,22 @@ namespace MatrixProjection {
 
         public void DrawPoint(Vector v) {
 
-            Console.SetCursorPosition((int)((v.X * xOffset + consoleX / 2.0f)), -(int)(v.Y - consoleY / 2.0f));
+            Console.SetCursorPosition((int)((v.X * xOffset) + (consoleX / 2.0f)), -(int)(v.Y - (consoleY / 2.0f)));
             Console.Write('·');
         }
 
-        private void DrawLine(Vector v1, Vector v2) {
+        public void DrawLine(Vector from, Vector to) {
 
-            //float step = 10.0f;
+            float step = 10.0f;
+
+            Vector line = (to - from) / step;
+
+            DrawPoint(from);
+
+            for (int i = 0; i < step; i++) {
+
+                DrawPoint(from += line);
+            }
 
             // 1. Subtract 'v2' by 'v1'
             // 2. Divide new Vector by 'step'
