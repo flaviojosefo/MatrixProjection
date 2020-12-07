@@ -36,6 +36,8 @@ namespace MatrixProjection {
                 }
             };
 
+            Vector v6 = new Vector(2, 6, 1);
+
             //Console.WriteLine(v1);
             //Console.WriteLine();
             //Console.WriteLine(m1);
@@ -49,7 +51,9 @@ namespace MatrixProjection {
             //draw.DrawLine(v2, v4);
             //draw.DrawLine(v3, v5);
 
-            Console.WriteLine(Matrix3D.MatMul(m1, m2));
+            //Console.WriteLine(Matrix3D.MatMul(m1, m2));
+
+            Console.WriteLine(Matrix3D.MatMul(m1, v6));
 
             Console.ReadKey();
         }

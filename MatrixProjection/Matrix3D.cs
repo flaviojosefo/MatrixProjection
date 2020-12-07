@@ -12,6 +12,30 @@ namespace MatrixProjection {
 
         public Matrix3D() { }
 
+        public static Matrix3D VectToMat(Vector v) {
+
+            return new Matrix3D() {
+
+                Matrix = new float[3, 1] {
+                    {v.X},
+                    {v.Y},
+                    {v.Z}
+                }
+            };
+        }
+
+        public static Vector MatToVec(Matrix3D m) {
+
+            return new Vector(m.Matrix[0, 0], 
+                              m.Matrix[1, 0], 
+                              m.Matrix.GetLength(0) > 2 ? m.Matrix[2, 0] : 0);
+        }
+
+        public static Matrix3D MatMul(Matrix3D m, Vector v) {
+
+            return MatMul(m, VectToMat(v));
+        }
+
         public static Matrix3D MatMul(Matrix3D m1, Matrix3D m2) {
 
             int rowsM1 = m1.Matrix.GetLength(0);
@@ -42,10 +66,7 @@ namespace MatrixProjection {
                 }
             }
 
-            return new Matrix3D() {
-
-                Matrix = newMatrix
-            };
+            return new Matrix3D() { Matrix = newMatrix };
         }
 
         public override string ToString() {
