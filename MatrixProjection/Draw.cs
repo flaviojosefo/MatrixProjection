@@ -26,23 +26,23 @@ namespace MatrixProjection {
             Console.CursorVisible = cursor;
         }
 
-        public void DrawPoint(Vector v) {
+        public void DrawPoint(Vector v, bool draw = true) {
 
             Console.SetCursorPosition((int)((v.X * xOffset) + (consoleX / 2.0f)), -(int)(v.Y - (consoleY / 2.0f)));
-            Console.Write('·');
+            Console.Write(draw ? '·' : ' ');
         }
 
-        public void DrawLine(Vector from, Vector to) {
+        public void DrawLine(Vector from, Vector to, bool draw = true) {
 
             float step = 10.0f;
 
             Vector line = (to - from) / step;
 
-            DrawPoint(from);
+            DrawPoint(from, draw);
 
             for (int i = 0; i < step; i++) {
 
-                DrawPoint(from += line);
+                DrawPoint(from += line, draw); 
             }
         }
 

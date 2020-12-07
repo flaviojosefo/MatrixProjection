@@ -48,12 +48,15 @@ namespace MatrixProjection {
             //draw.DrawPoint(v4);
             //draw.DrawPoint(v5);
 
-            //draw.DrawLine(v2, v4);
-            //draw.DrawLine(v3, v5);
+            draw.DrawLine(v2, v4, true);
+            draw.DrawLine(v3, v5, true);
+            Console.ReadKey();
+            draw.DrawLine(v2, v4, false);
+            draw.DrawLine(v3, v5, false);
 
             //Console.WriteLine(Matrix3D.MatMul(m1, m2));
 
-            Console.WriteLine(Matrix3D.MatMul(m1, v6));
+            //Console.WriteLine(Matrix3D.MatMul(m1, v6));
 
             Console.ReadKey();
         }
