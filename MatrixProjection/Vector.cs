@@ -28,6 +28,10 @@ namespace MatrixProjection {
 
             return new Vector(v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z);
         }
+        public static Vector operator *(Vector v, float scalar) {
+
+            return new Vector(v.X * scalar, v.Y * scalar, v.Z * scalar);
+        }
 
         public static Vector operator /(Vector v, float scalar) {
 
