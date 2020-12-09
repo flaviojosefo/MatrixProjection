@@ -11,7 +11,7 @@ namespace MatrixProjection {
         static void Main(string[] args) {
 
             int frameRate = 60;
-            int deltaTime = 1000 / frameRate;
+            int deltaTime = frameRate / 1000;
 
             Draw draw = new Draw(120, 50, false);
 
