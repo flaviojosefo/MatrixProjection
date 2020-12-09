@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace MatrixProjection {
 
@@ -10,55 +10,90 @@ namespace MatrixProjection {
 
         static void Main(string[] args) {
 
+            int frameRate = 60;
+            int deltaTime = 1000 / frameRate;
+
             Draw draw = new Draw(120, 50, false);
 
-            Vector v1 = new Vector(0, 0, 0);
-            Vector v2 = new Vector(5, 5, 0); 
-            Vector v3 = new Vector(5, -5, 0);
-            Vector v4 = new Vector(-5, -5, 0);
-            Vector v5 = new Vector(-5, 5, 0);
+            Vector[] cube = new Vector[8];
 
-            Matrix3D m1 = new Matrix3D() {
+            cube[0] = new Vector(10, 10, 10);
+            cube[1] = new Vector(-10, 10, 10);
+            cube[2] = new Vector(-10, -10, 10);
+            cube[3] = new Vector(10, -10, 10);
+            cube[4] = new Vector(10, 10, -10);
+            cube[5] = new Vector(-10, 10, -10);
+            cube[6] = new Vector(-10, -10, -10);
+            cube[7] = new Vector(10, -10, -10);
 
-                Matrix = new float[3, 3] {
-                    {1, 2, 1},
-                    {0, 1, 0},
-                    {2, 3, 4}
+            Vector[] projected = new Vector[cube.Length];
+
+            Matrix3D orthoProjection = new Matrix3D() {
+
+                Matrix = new float[2, 3] {
+                    {1, 0, 0},
+                    {0, 1, 0}
                 }
             };
 
-            Matrix3D m2 = new Matrix3D() {
+            float angle = 0;
 
-                Matrix = new float[3, 2] {
-                    {2, 5},
-                    {6, 7},
-                    {1, 8}
+            // Loop
+            while (true) {
+
+                Matrix3D rotationX = new Matrix3D() {
+
+                    Matrix = new float[3, 3] {
+                        {1, 0, 0},
+                        {0, (float)Math.Cos(angle), (float)-Math.Sin(angle)},
+                        {0, (float)Math.Sin(angle), (float)Math.Cos(angle)}
+                    }
+                };
+
+                Matrix3D rotationY = new Matrix3D() {
+
+                    Matrix = new float[3, 3] {
+                        {(float)Math.Cos(angle), 0, (float)Math.Sin(angle)},
+                        {0, 1, 0},
+                        {(float)-Math.Sin(angle), 0, (float)Math.Cos(angle)}
+                    }
+                };
+
+                Matrix3D rotationZ = new Matrix3D() {
+
+                    Matrix = new float[3, 3] {
+                        {(float)Math.Cos(angle), (float)-Math.Sin(angle), 0},
+                        {(float)Math.Sin(angle), (float)Math.Cos(angle), 0},
+                        {0, 0, 1}
+                    }
+                };
+
+                for (int i = 0; i < cube.Length / 2; i++) {
+
+                    draw.DrawLine(projected[i], projected[(i + 1) % 4], false);
+                    draw.DrawLine(projected[i + 4], projected[((i + 1) % 4) + 4], false);
+                    draw.DrawLine(projected[i], projected[i + 4], false);
                 }
-            };
 
-            Vector v6 = new Vector(2, 6, 1);
+                for (int i = 0; i < cube.Length; i++) {
 
-            //Console.WriteLine(v1);
-            //Console.WriteLine();
-            //Console.WriteLine(m1);
+                    Vector rotated = Matrix3D.MatMul(cube[i], rotationY);
+                    rotated = Matrix3D.MatMul(rotated, rotationX);
+                    rotated = Matrix3D.MatMul(rotated, rotationZ);
+                    projected[i] = Matrix3D.MatMul(rotated, orthoProjection);
+                }
 
-            //draw.DrawPoint(v1);
-            //draw.DrawPoint(v2);
-            //draw.DrawPoint(v3);
-            //draw.DrawPoint(v4);
-            //draw.DrawPoint(v5);
+                for (int i = 0; i < cube.Length / 2; i++) {
 
-            draw.DrawLine(v2, v4, true);
-            draw.DrawLine(v3, v5, true);
-            Console.ReadKey();
-            draw.DrawLine(v2, v4, false);
-            draw.DrawLine(v3, v5, false);
+                    draw.DrawLine(projected[i], projected[(i + 1) % 4]);
+                    draw.DrawLine(projected[i + 4], projected[((i + 1) % 4) + 4]);
+                    draw.DrawLine(projected[i], projected[i + 4]);
+                }
 
-            //Console.WriteLine(Matrix3D.MatMul(m1, m2));
+                angle -= 0.01f;
 
-            //Console.WriteLine(Matrix3D.MatMul(m1, v6));
-
-            Console.ReadKey();
+                Thread.Sleep(deltaTime);
+            }
         }
     }
 }
