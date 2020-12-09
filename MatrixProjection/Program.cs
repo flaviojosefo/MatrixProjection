@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MatrixProjection {
 
@@ -10,11 +11,12 @@ namespace MatrixProjection {
 
         static void Main(string[] args) {
 
+            //Stopwatch time1 = new Stopwatch();
+
             int frameRate = 60;
-            int deltaTime = frameRate / 1000;
+            float deltaTime = (1000 / frameRate) - 13;  // Average calculation time
 
             Draw draw = new Draw(120, 50, false);
-
             Vector[] cube = new Vector[8];
 
             cube[0] = new Vector(10, 10, 10);
@@ -40,6 +42,8 @@ namespace MatrixProjection {
 
             // Loop
             while (true) {
+
+                //time1.Restart();
 
                 Matrix3D rotationX = new Matrix3D() {
 
@@ -68,6 +72,7 @@ namespace MatrixProjection {
                     }
                 };
 
+                // Erase
                 for (int i = 0; i < cube.Length / 2; i++) {
 
                     draw.DrawLine(projected[i], projected[(i + 1) % 4], false);
@@ -75,6 +80,7 @@ namespace MatrixProjection {
                     draw.DrawLine(projected[i], projected[i + 4], false);
                 }
 
+                // Calculate
                 for (int i = 0; i < cube.Length; i++) {
 
                     Vector rotated = Matrix3D.MatMul(cube[i], rotationY);
@@ -83,6 +89,7 @@ namespace MatrixProjection {
                     projected[i] = Matrix3D.MatMul(rotated, orthoProjection);
                 }
 
+                // Draw
                 for (int i = 0; i < cube.Length / 2; i++) {
 
                     draw.DrawLine(projected[i], projected[(i + 1) % 4]);
@@ -92,7 +99,13 @@ namespace MatrixProjection {
 
                 angle -= 0.01f;
 
-                Thread.Sleep(deltaTime);
+                //time1.Stop();
+                //Console.SetCursorPosition(1, 0);
+                //Console.Write(' ');
+                //Console.SetCursorPosition(0, 0);
+                //Console.Write(time1.ElapsedMilliseconds);
+
+                Thread.Sleep((int)deltaTime);
             }
         }
     }
