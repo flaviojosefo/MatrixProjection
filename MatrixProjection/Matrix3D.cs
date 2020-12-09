@@ -31,6 +31,11 @@ namespace MatrixProjection {
                               m.Matrix.GetLength(0) > 2 ? m.Matrix[2, 0] : 0);
         }
 
+        public static Vector MatMul(Vector v, Matrix3D m) {
+
+            return MatToVec(MatMul(m, VectToMat(v)));
+        }
+
         public static Matrix3D MatMul(Matrix3D m, Vector v) {
 
             return MatMul(m, VectToMat(v));
