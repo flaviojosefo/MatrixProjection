@@ -83,15 +83,13 @@ namespace MatrixProjection {
                 // Calculate
                 for (int i = 0; i < cube.Length; i++) {
 
-                    Vector rotated = Matrix3D.MatMul(cube[i], rotationY);
-                    rotated = Matrix3D.MatMul(rotated, rotationX);
-                    rotated = Matrix3D.MatMul(rotated, rotationZ);
+                    // XYZ rotation = (((Z * Y) * X) * Vector)
+                    Matrix3D ZY = Matrix3D.MatMul(rotationZ, rotationY);
+                    Matrix3D fullRot = Matrix3D.MatMul(ZY, rotationX);
+                    Vector rotated = Matrix3D.MatMul(cube[i], fullRot);
 
                     float distance = 1.5f;
                     float z = 1.0f / (distance - rotated.Z);
-
-                    Console.SetCursorPosition(0, 0);
-                    Console.Write(z);
 
                     Matrix3D perspProjection = new Matrix3D() {
 
@@ -103,6 +101,7 @@ namespace MatrixProjection {
 
                     projected[i] = Matrix3D.MatMul(rotated, perspProjection);
 
+                    // Scale Vectors
                     projected[i] *= 20.0f;
                 }
 
