@@ -19,14 +19,14 @@ namespace MatrixProjection {
             Draw draw = new Draw(120, 50, false);
             Vector[] cube = new Vector[8];
 
-            cube[0] = new Vector(10, 10, 10);
-            cube[1] = new Vector(-10, 10, 10);
-            cube[2] = new Vector(-10, -10, 10);
-            cube[3] = new Vector(10, -10, 10);
-            cube[4] = new Vector(10, 10, -10);
-            cube[5] = new Vector(-10, 10, -10);
-            cube[6] = new Vector(-10, -10, -10);
-            cube[7] = new Vector(10, -10, -10);
+            cube[0] = new Vector(0.5f, 0.5f, 0.5f);
+            cube[1] = new Vector(-0.5f, 0.5f, 0.5f);
+            cube[2] = new Vector(-0.5f, -0.5f, 0.5f);
+            cube[3] = new Vector(0.5f, -0.5f, 0.5f);
+            cube[4] = new Vector(0.5f, 0.5f, -0.5f);
+            cube[5] = new Vector(-0.5f, 0.5f, -0.5f);
+            cube[6] = new Vector(-0.5f, -0.5f, -0.5f);
+            cube[7] = new Vector(0.5f, -0.5f, -0.5f);
 
             Vector[] projected = new Vector[cube.Length];
 
@@ -86,7 +86,24 @@ namespace MatrixProjection {
                     Vector rotated = Matrix3D.MatMul(cube[i], rotationY);
                     rotated = Matrix3D.MatMul(rotated, rotationX);
                     rotated = Matrix3D.MatMul(rotated, rotationZ);
-                    projected[i] = Matrix3D.MatMul(rotated, orthoProjection);
+
+                    float distance = 1.5f;
+                    float z = 1.0f / (distance - rotated.Z);
+
+                    Console.SetCursorPosition(0, 0);
+                    Console.Write(z);
+
+                    Matrix3D perspProjection = new Matrix3D() {
+
+                        Matrix = new float[2, 3] {
+                            {z, 0, 0},
+                            {0, z, 0},
+                        }
+                    };
+
+                    projected[i] = Matrix3D.MatMul(rotated, perspProjection);
+
+                    projected[i] *= 20.0f;
                 }
 
                 // Draw
