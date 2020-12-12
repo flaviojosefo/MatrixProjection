@@ -10,7 +10,7 @@ namespace MatrixProjection {
 
         private const float xOffset = 2.0f;
 
-        private int consoleX, consoleY;
+        private readonly int consoleX, consoleY;
 
         public Draw(int x, int y, bool cursor) {
 
@@ -28,8 +28,11 @@ namespace MatrixProjection {
 
         public void DrawPoint(Vector v, bool draw = true, char symbol = '■') {
 
-            Console.SetCursorPosition((int)((v.X * xOffset) + (consoleX / 2.0f)), -(int)(v.Y - (consoleY / 2.0f)));
-            Console.Write(draw ? symbol : ' ');
+            if (!OutOfBounds(v)) {
+
+                Console.SetCursorPosition((int)((v.X * xOffset) + (consoleX / 2.0f)), -(int)(v.Y - (consoleY / 2.0f)));
+                Console.Write(draw ? symbol : ' ');
+            }
         }
 
         public void DrawLine(Vector from, Vector to, bool draw = true) {
@@ -48,7 +51,13 @@ namespace MatrixProjection {
             DrawPoint(from += line, draw);
         }
 
-        private bool OutOfBounds() {
+        private bool OutOfBounds(Vector v) {
+
+            if ((int)((v.X * xOffset) + (consoleX / 2.0f)) >= consoleX || (int)((v.X * xOffset) + (consoleX / 2.0f)) < 0 ||
+               -(int)(v.Y - (consoleY / 2.0f)) >= (consoleY - 1) || -(int)(v.Y - (consoleY / 2.0f)) < 0) {
+
+                return true;
+            }
 
             return false;
         }
