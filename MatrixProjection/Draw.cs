@@ -12,43 +12,35 @@ namespace MatrixProjection {
 
         private readonly int consoleX, consoleY;
 
-        public Draw(int x, int y, bool cursor) {
+        public Draw() {
 
-            consoleX = x;
-            consoleY = y;
-
-            Console.WindowWidth = consoleX;
-            Console.WindowHeight = consoleY;
-
-            Console.BufferWidth = consoleX;
-            Console.BufferHeight = consoleY;
-
-            Console.CursorVisible = cursor;
+            consoleX = Console.WindowWidth;
+            consoleY = Console.WindowHeight;
         }
 
-        public void DrawPoint(Vector v, bool draw = true, char symbol = '■') {
+        public void DrawPoint(Vector v, bool render = true, char symbol = '■') {
 
             if (!OutOfBounds(v)) {
 
                 Console.SetCursorPosition((int)((v.X * xOffset) + (consoleX / 2.0f)), -(int)(v.Y - (consoleY / 2.0f)));
-                Console.Write(draw ? symbol : ' ');
+                Console.Write(render ? symbol : ' ');
             }
         }
 
-        public void DrawLine(Vector from, Vector to, bool draw = true) {
+        public void DrawLine(Vector from, Vector to, bool render = true) {
 
             int step = 10;
 
             Vector line = (to - from) / step;
 
-            DrawPoint(from, draw);
+            DrawPoint(from, render);
 
             for (int i = 0; i < step - 1; i++) {
 
-                DrawPoint(from += line, draw, '·'); 
+                DrawPoint(from += line, render, '·'); 
             }
 
-            DrawPoint(from += line, draw);
+            DrawPoint(from += line, render);
         }
 
         private bool OutOfBounds(Vector v) {
