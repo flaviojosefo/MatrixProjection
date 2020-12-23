@@ -34,9 +34,9 @@ namespace MatrixProjection {
         Matrix3D orthopProjection = new Matrix3D() {
 
             Matrix = new float[2, 3] {
-                            {1, 0, 0},
-                            {0, 1, 0},
-                    }
+                {1, 0, 0},
+                {0, 1, 0},
+            }
         };
 
         //Stopwatch time1 = new Stopwatch();
@@ -86,27 +86,27 @@ namespace MatrixProjection {
             Matrix3D rotationX = new Matrix3D() {
 
                 Matrix = new float[3, 3] {
-                        {1, 0, 0},
-                        {0, (float)Math.Cos(angle), (float)-Math.Sin(angle)},
-                        {0, (float)Math.Sin(angle), (float)Math.Cos(angle)}
+                    {1, 0, 0},
+                    {0, (float)Math.Cos(angle), (float)-Math.Sin(angle)},
+                    {0, (float)Math.Sin(angle), (float)Math.Cos(angle)}
                 }
             };
 
             Matrix3D rotationY = new Matrix3D() {
 
                 Matrix = new float[3, 3] {
-                        {(float)Math.Cos(angle), 0, (float)Math.Sin(angle)},
-                        {0, 1, 0},
-                        {(float)-Math.Sin(angle), 0, (float)Math.Cos(angle)}
+                    {(float)Math.Cos(angle), 0, (float)Math.Sin(angle)},
+                    {0, 1, 0},
+                    {(float)-Math.Sin(angle), 0, (float)Math.Cos(angle)}
                 }
             };
 
             Matrix3D rotationZ = new Matrix3D() {
 
                 Matrix = new float[3, 3] {
-                        {(float)Math.Cos(angle), (float)-Math.Sin(angle), 0},
-                        {(float)Math.Sin(angle), (float)Math.Cos(angle), 0},
-                        {0, 0, 1}
+                    {(float)Math.Cos(angle), (float)-Math.Sin(angle), 0},
+                    {(float)Math.Sin(angle), (float)Math.Cos(angle), 0},
+                    {0, 0, 1}
                 }
             };
 
@@ -127,8 +127,8 @@ namespace MatrixProjection {
                 Matrix3D perspProjection = new Matrix3D() {
 
                     Matrix = new float[2, 3] {
-                            {z, 0, 0},
-                            {0, z, 0},
+                        {z, 0, 0},
+                        {0, z, 0},
                     }
                 };
 
@@ -173,21 +173,22 @@ namespace MatrixProjection {
 
         private void ManageInput() {
 
+            //Console.Clear(); // Fixes weird writing issue
+
             switch (Console.ReadKey().Key) {
 
                 case ConsoleKey.UpArrow:
-                    cursorY = cursorY > 2 ? cursorY - 1 : cursorY;
+                    cursorY = cursorY > 2 ? cursorY - 1 : 8;
                     break;
 
                 case ConsoleKey.DownArrow:
-                    cursorY = cursorY < 8 ? cursorY + 1 : cursorY;
+                    cursorY = cursorY < 8 ? cursorY + 1 : 2;
                     break;
 
                 case ConsoleKey.Enter:
                     SelectOption();
                     break;
             }
-
             ManageInput();
         }
 

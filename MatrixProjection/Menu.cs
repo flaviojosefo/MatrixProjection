@@ -36,11 +36,11 @@ namespace MatrixProjection {
             switch(Console.ReadKey().Key) {
 
                 case ConsoleKey.UpArrow:
-                    optionN = optionN > 0 ? optionN - 1 : optionN;
+                    optionN = optionN > 0 ? optionN - 1 : 3;
                     break;
 
                 case ConsoleKey.DownArrow:
-                    optionN = optionN < 3 ? optionN + 1 : optionN;
+                    optionN = optionN < 3 ? optionN + 1 : 0;
                     break;
 
                 case ConsoleKey.Enter:
