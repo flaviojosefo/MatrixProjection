@@ -14,9 +14,9 @@ namespace MatrixProjection {
 
             Vertices = new Vector[4];
 
-            Vertices[0] = new Vector(0.5f, -0.5f, (float)Math.Sqrt(3.0f) / 4.0f);
-            Vertices[1] = new Vector(-0.5f, -0.5f, (float)Math.Sqrt(3.0f) / 4.0f);
-            Vertices[2] = new Vector(0.0f, -0.5f, -((float)Math.Sqrt(3.0f) / 4.0f));
+            Vertices[0] = new Vector(0.0f, -0.5f, -0.6f);
+            Vertices[1] = new Vector(-Vertices[0].Z * (float)Math.Sin((Math.PI * -120) / 180), -0.5f, Vertices[0].Z * (float)Math.Cos((Math.PI * -120) / 180));
+            Vertices[2] = new Vector(-Vertices[0].Z * (float)Math.Sin((Math.PI * 120) / 180), -0.5f, Vertices[0].Z * (float)Math.Cos((Math.PI * 120) / 180));
             Vertices[3] = new Vector(0.0f, 1.0f, 0.0f);
         }
 
