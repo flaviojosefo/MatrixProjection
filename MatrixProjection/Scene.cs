@@ -14,7 +14,7 @@ namespace MatrixProjection {
 
         private readonly Shape shape;
 
-        private Vector[] projected;
+        private readonly Vector[] projected;
 
         private float angle;
 
