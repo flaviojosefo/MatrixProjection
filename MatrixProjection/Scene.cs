@@ -22,9 +22,9 @@ namespace MatrixProjection {
 
         private Thread input;
 
-        private bool loop = true;
-
         private bool ortho;
+
+        private bool loop = true;
 
         private bool rotate = true;
         private bool rotateX = true;
