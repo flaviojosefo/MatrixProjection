@@ -55,28 +55,28 @@ namespace MatrixProjection {
 
             Console.Clear();
 
-            Scene scene;
+            Scene scene = null;
 
             switch(optionN + 1) {
 
                 case 1:
-
                     scene = new Scene(60, new Cube());
-
-                    scene.Start();
-                    scene.Update();
-
                     break;
 
                 case 2:
+                    scene = new Scene(60, new QuadPyramid());
                     break;
 
                 case 3:
+                    scene = new Scene(60, new TriPyramid());
                     break;
 
                 case 4:
                     return;
             }
+
+            scene.Start();
+            scene.Update();
         }
     }
 }
