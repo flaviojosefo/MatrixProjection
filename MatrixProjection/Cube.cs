@@ -24,13 +24,13 @@ namespace MatrixProjection {
             Vertices[7] = new Vector(0.5f, -0.5f, -0.5f);
         }
 
-        public override void DrawShape(Draw draw, Vector[] projected, bool render = true) {
+        public override void DrawShape(DrawString draw, Vector[] projected) {
 
             for (int i = 0; i < Vertices.Length / 2; i++) {
 
-                draw.DrawLine(projected[i], projected[i + 4], render);
-                draw.DrawLine(projected[i], projected[(i + 1) % 4], render);
-                draw.DrawLine(projected[i + 4], projected[((i + 1) % 4) + 4], render);
+                draw.AddLine(projected[i], projected[i + 4]);
+                draw.AddLine(projected[i], projected[(i + 1) % 4]);
+                draw.AddLine(projected[i + 4], projected[((i + 1) % 4) + 4]);
             }
         }
     }

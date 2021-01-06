@@ -28,7 +28,8 @@ namespace MatrixProjection {
             Console.WriteLine("  1.Cube");
             Console.WriteLine("  2.Quad Pyramid");
             Console.WriteLine("  3.Triangular Pyramid");
-            Console.WriteLine("  4.Exit");
+            Console.WriteLine("  4.Engram (Regular Dodecahedron)");
+            Console.WriteLine("  5.Exit");
 
             Console.SetCursorPosition(0, optionN);
             Console.Write('►');
@@ -36,11 +37,11 @@ namespace MatrixProjection {
             switch(Console.ReadKey().Key) {
 
                 case ConsoleKey.UpArrow:
-                    optionN = optionN > 0 ? optionN - 1 : 3;
+                    optionN = optionN > 0 ? optionN - 1 : 4;
                     break;
 
                 case ConsoleKey.DownArrow:
-                    optionN = optionN < 3 ? optionN + 1 : 0;
+                    optionN = optionN < 4 ? optionN + 1 : 0;
                     break;
 
                 case ConsoleKey.Enter:
@@ -72,6 +73,10 @@ namespace MatrixProjection {
                     break;
 
                 case 4:
+                    scene = new Scene(60, new Engram());
+                    break;
+
+                case 5:
                     return;
             }
 

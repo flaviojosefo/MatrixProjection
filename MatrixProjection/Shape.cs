@@ -10,6 +10,6 @@ namespace MatrixProjection {
 
         public abstract Vector[] Vertices { get; protected set; }
 
-        public abstract void DrawShape(Draw draw, Vector[] projected, bool render = true);
+        public abstract void DrawShape(DrawString draw, Vector[] projected);
     }
 }

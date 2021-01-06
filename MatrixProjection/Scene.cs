@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -8,7 +9,7 @@ namespace MatrixProjection {
 
     public class Scene {
 
-        private Draw draw;
+        private DrawString draw;
 
         private readonly float deltaTime;
 
@@ -31,7 +32,7 @@ namespace MatrixProjection {
         private bool rotateY = true;
         private bool rotateZ = true;
 
-        Matrix3D orthopProjection = new Matrix3D() {
+        Matrix3D orthoProjection = new Matrix3D() {
 
             Matrix = new float[2, 3] {
                 {1, 0, 0},
@@ -43,7 +44,7 @@ namespace MatrixProjection {
 
         public Scene(int frameRate, Shape shape) {
 
-            deltaTime = (1000 / frameRate) - 13;  // Average calculation time
+            deltaTime = 1000 / frameRate;
 
             this.shape = shape;
 
@@ -52,7 +53,7 @@ namespace MatrixProjection {
 
         public void Start() {
 
-            draw = new Draw();
+            draw = new DrawString();
 
             input = new Thread(ManageInput);
             input.Start();
@@ -65,8 +66,12 @@ namespace MatrixProjection {
 
                 //time1.Restart();
 
+                draw.NewFrame();
+
                 Render3D();
                 RenderUI();
+
+                draw.DrawFrame();
 
                 //time1.Stop();
                 //Console.SetCursorPosition(1, 0);
@@ -81,67 +86,65 @@ namespace MatrixProjection {
         // Render 1st
         private void Render3D() {
 
-            if (!rotate) return;
+            if (rotate) {
 
-            Matrix3D rotationX = new Matrix3D() {
+                Matrix3D rotationX = new Matrix3D() {
 
-                Matrix = new float[3, 3] {
-                    {1, 0, 0},
-                    {0, (float)Math.Cos(angle), (float)-Math.Sin(angle)},
-                    {0, (float)Math.Sin(angle), (float)Math.Cos(angle)}
-                }
-            };
-
-            Matrix3D rotationY = new Matrix3D() {
-
-                Matrix = new float[3, 3] {
-                    {(float)Math.Cos(angle), 0, (float)Math.Sin(angle)},
-                    {0, 1, 0},
-                    {(float)-Math.Sin(angle), 0, (float)Math.Cos(angle)}
-                }
-            };
-
-            Matrix3D rotationZ = new Matrix3D() {
-
-                Matrix = new float[3, 3] {
-                    {(float)Math.Cos(angle), (float)-Math.Sin(angle), 0},
-                    {(float)Math.Sin(angle), (float)Math.Cos(angle), 0},
-                    {0, 0, 1}
-                }
-            };
-
-            // Erase
-            shape.DrawShape(draw, projected, false);
-
-            // Calculate
-            for (int i = 0; i < shape.Vertices.Length; i++) {
-
-                // XYZ rotation = (((Z * Y) * X) * Vector)
-                Matrix3D ZY = Matrix3D.MatMul(rotationZ, rotationY);
-                Matrix3D fullRot = Matrix3D.MatMul(ZY, rotationX);
-                Vector rotated = Matrix3D.MatMul(shape.Vertices[i], fullRot);
-
-                float distance = 1.5f;
-                float z = 1.0f / (distance - rotated.Z);
-
-                Matrix3D perspProjection = new Matrix3D() {
-
-                    Matrix = new float[2, 3] {
-                        {z, 0, 0},
-                        {0, z, 0},
+                    Matrix = new float[3, 3] {
+                        {1, 0, 0},
+                        {0, (float)Math.Cos(angle), (float)-Math.Sin(angle)},
+                        {0, (float)Math.Sin(angle), (float)Math.Cos(angle)}
                     }
                 };
 
-                projected[i] = ortho ? Matrix3D.MatMul(rotated, orthopProjection) : Matrix3D.MatMul(rotated, perspProjection);
+                Matrix3D rotationY = new Matrix3D() {
 
-                // Scale Vectors
-                projected[i] *= 20.0f;
+                    Matrix = new float[3, 3] {
+                        {(float)Math.Cos(angle), 0, (float)Math.Sin(angle)},
+                        {0, 1, 0},
+                        {(float)-Math.Sin(angle), 0, (float)Math.Cos(angle)}
+                    }
+                };
+
+                Matrix3D rotationZ = new Matrix3D() {
+
+                    Matrix = new float[3, 3] {
+                        {(float)Math.Cos(angle), (float)-Math.Sin(angle), 0},
+                        {(float)Math.Sin(angle), (float)Math.Cos(angle), 0},
+                        {0, 0, 1}
+                    }
+                };
+
+                // Calculate
+                for (int i = 0; i < shape.Vertices.Length; i++) {
+
+                    // XYZ rotation = (((Z * Y) * X) * Vector)
+                    Matrix3D ZY = Matrix3D.MatMul(rotationZ, rotationY);
+                    Matrix3D fullRot = Matrix3D.MatMul(ZY, rotationX);
+                    Vector rotated = Matrix3D.MatMul(shape.Vertices[i], fullRot);
+
+                    float distance = 1.5f;
+                    float z = 1.0f / (distance - rotated.Z);
+
+                    Matrix3D perspProjection = new Matrix3D() {
+
+                        Matrix = new float[2, 3] {
+                            {z, 0, 0},
+                            {0, z, 0},
+                        }
+                    };
+
+                    projected[i] = ortho ? Matrix3D.MatMul(rotated, orthoProjection) : Matrix3D.MatMul(rotated, perspProjection);
+
+                    // Scale Vectors
+                    projected[i] *= 20.0f;
+                }
+
+                angle -= 0.01f;
             }
 
-            // Draw
+            // Draw Shape
             shape.DrawShape(draw, projected);
-
-            angle -= 0.01f;
         }
 
         // Render 2nd
@@ -161,19 +164,16 @@ namespace MatrixProjection {
             menu[9] = "|                      |";
             menu[10] = "■----------------------■";
 
+
             for (int i = 0; i < menu.Length; i++) {
 
-                Console.SetCursorPosition(0, i);
-                Console.Write(menu[i]);
+                draw.AddText(new Vector(0, i), menu[i]);
             }
 
-            Console.SetCursorPosition(5, cursorY);
-            Console.Write('►');
+            draw.AddText(new Vector(5, cursorY), '►');
         }
 
         private void ManageInput() {
-
-            //Console.Clear(); // Fixes weird writing issue
 
             switch (Console.ReadKey().Key) {
 
@@ -189,6 +189,7 @@ namespace MatrixProjection {
                     SelectOption();
                     break;
             }
+
             ManageInput();
         }
 

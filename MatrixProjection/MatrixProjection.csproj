@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Cube.cs" />
     <Compile Include="Draw.cs" />
+    <Compile Include="DrawString.cs" />
     <Compile Include="Engram.cs" />
     <Compile Include="Matrix3D.cs" />
     <Compile Include="Menu.cs" />
