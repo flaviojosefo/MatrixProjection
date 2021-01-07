@@ -73,7 +73,7 @@ namespace MatrixProjection {
                     break;
 
                 case 4:
-                    scene = new Scene(60, new Engram());
+                    scene = new Scene(60, new Engram(), 60);
                     break;
 
                 case 5:

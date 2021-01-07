@@ -16,6 +16,7 @@ namespace MatrixProjection {
         private readonly Shape shape;
 
         private readonly Vector[] projected;
+        private readonly float projectionScale;
 
         private float angle;
 
@@ -42,13 +43,15 @@ namespace MatrixProjection {
 
         //Stopwatch time1 = new Stopwatch();
 
-        public Scene(int frameRate, Shape shape) {
+        public Scene(int frameRate, Shape shape, float projectionScale = 20.0f) {
 
             deltaTime = 1000 / frameRate;
 
             this.shape = shape;
 
             projected = new Vector[shape.Vertices.Length];
+
+            this.projectionScale = projectionScale;
         }
 
         public void Start() {
@@ -137,7 +140,7 @@ namespace MatrixProjection {
                     projected[i] = ortho ? Matrix3D.MatMul(rotated, orthoProjection) : Matrix3D.MatMul(rotated, perspProjection);
 
                     // Scale Vectors
-                    projected[i] *= 20.0f;
+                    projected[i] *= projectionScale;
                 }
 
                 angle -= 0.01f;
