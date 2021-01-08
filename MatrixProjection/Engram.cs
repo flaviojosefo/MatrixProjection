@@ -77,7 +77,7 @@ namespace MatrixProjection {
 
             connections = new (int v1, int v2)[30];
 
-            float bestDistance = (float)System.Math.Round(GetBestDistance(), 3);
+            float bestDistance = (float)Math.Round(GetBestDistance(), 3);
 
             for (int i = 0; i < Vertices.Length; i++) {
 
@@ -89,7 +89,7 @@ namespace MatrixProjection {
 
                     if (Vertices[i] == Vertices[j]) continue;
 
-                    float currentDistance = (float)System.Math.Round(Vector.Distance(Vertices[i], Vertices[j]), 3);
+                    float currentDistance = (float)Math.Round(Vector.Distance(Vertices[i], Vertices[j]), 3);
 
                     if (currentDistance == bestDistance) {
 
