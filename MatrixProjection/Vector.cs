@@ -8,19 +8,17 @@ namespace MatrixProjection {
 
     public struct Vector {
 
-        public float X { get; private set; }
-        public float Y { get; private set; }
-        public float Z { get; private set; }
+        public float X { get; }
+        public float Y { get; }
+        public float Z { get; }
 
-        public float Magnitude { get; private set; }
+        public float Magnitude => GetMagnitude();
 
         public Vector (float x, float y, float z = 0) {
 
             X = x;
             Y = y;
             Z = z;
-
-            Magnitude = (float)Math.Sqrt((X * X) + (Y * Y) + (Z * Z));
         }
 
         public static Vector operator +(Vector v1, Vector v2) {
@@ -55,6 +53,11 @@ namespace MatrixProjection {
         public static float Distance(Vector v1, Vector v2) {
 
             return (v2 - v1).Magnitude;
+        }
+
+        private float GetMagnitude() {
+
+            return (float)Math.Sqrt((X * X) + (Y * Y) + (Z * Z));
         }
 
         public override string ToString() {
