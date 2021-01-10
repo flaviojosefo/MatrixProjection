@@ -10,7 +10,7 @@ namespace MatrixProjection {
 
         public override Vector[] Vertices { get; protected set; }
 
-        private (int index1, int index2)[] connections;
+        private (int vertex1, int vertex2)[] connections;
 
         public Engram() {
 
@@ -22,7 +22,7 @@ namespace MatrixProjection {
 
             for (int i = 0; i < connections.Length; i++) {
 
-                draw.AddLine(projected[connections[i].index1], projected[connections[i].index2]);
+                draw.AddLine(projected[connections[i].vertex1], projected[connections[i].vertex2]);
             }
         }
 
@@ -75,7 +75,7 @@ namespace MatrixProjection {
 
         private void GetConnections() {
 
-            connections = new (int v1, int v2)[30];
+            connections = new (int, int)[30];
 
             float bestDistance = (float)Math.Round(GetBestDistance(), 3);
 
@@ -95,8 +95,8 @@ namespace MatrixProjection {
 
                         for (int k = 0; k < connections.Length; k++) {
 
-                            if ((i == connections[k].index1 && j == connections[k].index2) ||
-                                (j == connections[k].index1 && i == connections[k].index2)) {
+                            if ((i == connections[k].vertex1 && j == connections[k].vertex2) ||
+                                (j == connections[k].vertex1 && i == connections[k].vertex2)) {
 
                                 skip = true;
                                 break;
@@ -120,18 +120,13 @@ namespace MatrixProjection {
 
             float bestDistance = float.MaxValue;
 
-            for (int i = 0; i < 1; i++) {
+            for (int i = 1; i < Vertices.Length; i++) {
 
-                for (int j = 0; j < Vertices.Length; j++) {
+                float currentDistance = Vector.Distance(Vertices[0], Vertices[i]);
 
-                    if (Vertices[i] == Vertices[j]) continue;
+                if (currentDistance < bestDistance) {
 
-                    float currentDistance = Vector.Distance(Vertices[i], Vertices[j]);
-
-                    if (currentDistance < bestDistance) {
-
-                        bestDistance = currentDistance;
-                    }
+                    bestDistance = currentDistance;
                 }
             }
 
