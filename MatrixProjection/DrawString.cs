@@ -30,9 +30,6 @@ namespace MatrixProjection {
 
                 frame.Append(' ');
             }
-
-            Console.SetCursorPosition(0, 0);
-            Console.Write(frame);
         }
 
         public void AddPoint(Vector v, char symbol = '■') {
