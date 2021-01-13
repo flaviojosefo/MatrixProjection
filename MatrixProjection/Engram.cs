@@ -81,13 +81,7 @@ namespace MatrixProjection {
 
             for (int i = 0; i < Vertices.Length; i++) {
 
-                int connectIndex = 0;
-
                 for (int j = 0; j < Vertices.Length; j++) {
-
-                    bool skip = false;
-
-                    if (Vertices[i] == Vertices[j]) continue;
 
                     float currentDistance = (float)Math.Round(Vector.Distance(Vertices[i], Vertices[j]), 3);
 
@@ -98,19 +92,14 @@ namespace MatrixProjection {
                             if ((i == connections[k].vertex1 && j == connections[k].vertex2) ||
                                 (j == connections[k].vertex1 && i == connections[k].vertex2)) {
 
-                                skip = true;
                                 break;
 
                             } else if (connections[k] == default) {
 
-                                connectIndex = k;
+                                connections[k] = (i, j);
                                 break;
                             }
                         }
-
-                        if (skip) continue;
-
-                        connections[connectIndex] = (i, j);
                     }
                 }
             }
