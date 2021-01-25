@@ -18,7 +18,9 @@ namespace MatrixProjection {
         private readonly Vector[] projected;
         private readonly float projectionScale;
 
-        private float angle;
+        private float xAngle;
+        private float yAngle;
+        private float zAngle;
 
         private int cursorY = 2;
 
@@ -95,36 +97,37 @@ namespace MatrixProjection {
 
                     Matrix = new float[3, 3] {
                         {1, 0, 0},
-                        {0, (float)Math.Cos(angle), (float)-Math.Sin(angle)},
-                        {0, (float)Math.Sin(angle), (float)Math.Cos(angle)}
+                        {0, (float)Math.Cos(xAngle), (float)-Math.Sin(xAngle)},
+                        {0, (float)Math.Sin(xAngle), (float)Math.Cos(xAngle)}
                     }
                 };
 
                 Matrix3D rotationY = new Matrix3D() {
 
                     Matrix = new float[3, 3] {
-                        {(float)Math.Cos(angle), 0, (float)Math.Sin(angle)},
+                        {(float)Math.Cos(yAngle), 0, (float)Math.Sin(yAngle)},
                         {0, 1, 0},
-                        {(float)-Math.Sin(angle), 0, (float)Math.Cos(angle)}
+                        {(float)-Math.Sin(yAngle), 0, (float)Math.Cos(yAngle)}
                     }
                 };
 
                 Matrix3D rotationZ = new Matrix3D() {
 
                     Matrix = new float[3, 3] {
-                        {(float)Math.Cos(angle), (float)-Math.Sin(angle), 0},
-                        {(float)Math.Sin(angle), (float)Math.Cos(angle), 0},
+                        {(float)Math.Cos(zAngle), (float)-Math.Sin(zAngle), 0},
+                        {(float)Math.Sin(zAngle), (float)Math.Cos(zAngle), 0},
                         {0, 0, 1}
                     }
                 };
 
+                // XYZ rotation = (((Z * Y) * X) * Vector) or (Z×Y×X)×V
+                Matrix3D rotMatrix = Matrix3D.MatMul(rotationZ, rotationY);
+                rotMatrix = Matrix3D.MatMul(rotMatrix, rotationX);
+
                 // Calculate
                 for (int i = 0; i < shape.Vertices.Length; i++) {
 
-                    // XYZ rotation = (((Z * Y) * X) * Vector)
-                    Matrix3D ZY = Matrix3D.MatMul(rotationZ, rotationY);
-                    Matrix3D fullRot = Matrix3D.MatMul(ZY, rotationX);
-                    Vector rotated = Matrix3D.MatMul(shape.Vertices[i], fullRot);
+                    Vector rotated = Matrix3D.MatMul(shape.Vertices[i], rotMatrix);
 
                     float distance = 1.5f;
                     float z = 1.0f / (distance - rotated.Z);
@@ -143,7 +146,9 @@ namespace MatrixProjection {
                     projected[i] *= projectionScale;
                 }
 
-                angle -= 0.01f;
+                if (rotateX) xAngle -= 0.01f;
+                if (rotateY) yAngle -= 0.01f;
+                if (rotateZ) zAngle -= 0.01f;
             }
 
             // Draw Shape
@@ -221,7 +226,7 @@ namespace MatrixProjection {
                     break;
 
                 case 6:
-                    angle = 0; // Reset
+                    xAngle = yAngle = zAngle = 0.0f; // Reset
                     rotate = true;
                     break;
 
