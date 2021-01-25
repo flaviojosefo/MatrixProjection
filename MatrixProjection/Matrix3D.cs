@@ -10,6 +10,8 @@ namespace MatrixProjection {
 
         public float[,] Matrix { get; set; }
 
+        public Matrix3D Inverse => GetInverse();
+
         public Matrix3D() { }
 
         public static Matrix3D VectToMat(Vector v) {
@@ -50,11 +52,11 @@ namespace MatrixProjection {
 
             if (colsM1 != rowsM2) {
 
-                Console.Write("Columns of M1 MUST match rows of M2");
+                Console.Write("Columns of M1 MUST match Rows of M2");
                 return null;
             }
 
-            float[,] newMatrix = new float[rowsM1,colsM2];
+            float[,] newMatrix = new float[rowsM1, colsM2];
 
             for (int i = 0; i < rowsM1; i++) {
 
@@ -72,6 +74,12 @@ namespace MatrixProjection {
             }
 
             return new Matrix3D() { Matrix = newMatrix };
+        }
+
+        // Implement to 3x3 Matrix only?
+        private Matrix3D GetInverse() {
+
+            return null;
         }
 
         public override string ToString() {
