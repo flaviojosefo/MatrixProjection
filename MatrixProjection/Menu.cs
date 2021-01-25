@@ -8,6 +8,8 @@ namespace MatrixProjection {
 
     public class Menu {
 
+        private const string CONSOLE_TITLE = "MatrixProjection";
+
         private int optionN;
 
         public Menu(int consoleX, int consoleY) {
@@ -19,6 +21,8 @@ namespace MatrixProjection {
             Console.BufferHeight = consoleY;
 
             Console.CursorVisible = false;
+
+            Console.Title = CONSOLE_TITLE;
         }
 
         public void ShowOptions() {
