@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MatrixProjection {
 
@@ -12,21 +11,25 @@ namespace MatrixProjection {
 
         private readonly int consoleX, consoleY;
 
-        private StringBuilder frame;
+        private readonly int totalPixels;
+
+        private readonly StringBuilder frame;
 
         public DrawString() {
 
             consoleX = Console.WindowWidth;
             consoleY = Console.WindowHeight;
+
+            totalPixels = consoleX * (consoleY - 1);
+
+            frame = new StringBuilder(totalPixels);
         }
 
         public void NewFrame() {
 
-            int total = consoleX * (consoleY - 1);
+            frame.Clear();
 
-            frame = new StringBuilder(total);
-
-            for (int i = 0; i < total; i++) {
+            for (int i = 0; i < totalPixels; i++) {
 
                 frame.Append(' ');
             }
