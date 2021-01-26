@@ -65,7 +65,7 @@ namespace MatrixProjection {
             switch(optionN + 1) {
 
                 case 1:
-                    scene = new Scene(60, new Cube(true), 40);
+                    scene = new Scene(60, new Cube(true));
                     break;
 
                 case 2:

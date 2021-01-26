@@ -43,6 +43,23 @@ namespace MatrixProjection {
             return MatMul(m, VectToMat(v));
         }
 
+        public static Vector MatMul4x4(Vector v, Matrix3D m) {
+
+            Vector multVector = new Vector(
+                v.X * m.Matrix[0, 0] + v.Y * m.Matrix[1, 0] + v.Z * m.Matrix[2, 0] + m.Matrix[3, 0],
+                v.X * m.Matrix[0, 1] + v.Y * m.Matrix[1, 1] + v.Z * m.Matrix[2, 1] + m.Matrix[3, 1],
+                v.X * m.Matrix[0, 2] + v.Y * m.Matrix[1, 2] + v.Z * m.Matrix[2, 2] + m.Matrix[3, 2]);
+
+            float w = v.X * m.Matrix[0, 3] + v.Y * m.Matrix[1, 3] + v.Z * m.Matrix[2, 3] + m.Matrix[3, 3];
+
+            if (w != 0.0f) {
+
+                multVector /= w;
+            }
+
+            return multVector;
+        }
+
         public static Matrix3D MatMul(Matrix3D m1, Matrix3D m2) {
 
             int rowsM1 = m1.Matrix.GetLength(0);

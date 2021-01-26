@@ -31,9 +31,9 @@ namespace MatrixProjection {
         private bool loop = true;
 
         private bool rotate = true;
-        private bool rotateX = true;
+        private bool rotateX = false;
         private bool rotateY = true;
-        private bool rotateZ = true;
+        private bool rotateZ = false;
 
         Matrix3D orthoProjection = new Matrix3D() {
 
@@ -42,6 +42,8 @@ namespace MatrixProjection {
                 {0, 1, 0},
             }
         };
+
+        Matrix3D perspective = new Matrix3D() { Matrix = new float[4, 4] };
 
         //Stopwatch time1 = new Stopwatch();
 
@@ -62,6 +64,19 @@ namespace MatrixProjection {
 
             input = new Thread(ManageInput);
             input.Start();
+
+            // Perspective Projection
+            float nearPlane = 0.1f;
+            float farPlane = 1000.0f;
+            float fov = 90.0f;
+            float aspectRatio = 1.0f; // Console.WindowWidth / (float)(Console.WindowHeight); Height of a character 2x1 (width x height)
+            float fovRad = (float)(1.0f / Math.Tan((double)(fov * 0.5f / 180.0f * Math.PI)));
+
+            perspective.Matrix[0, 0] = aspectRatio * fovRad;
+            perspective.Matrix[1, 1] = fovRad;
+            perspective.Matrix[2, 2] = farPlane / (farPlane - nearPlane);
+            perspective.Matrix[3, 2] = (-farPlane * nearPlane) / (farPlane - nearPlane);
+            perspective.Matrix[2, 3] = 1.0f;
         }
 
         public void Update() {
@@ -130,20 +145,13 @@ namespace MatrixProjection {
 
                     for (int j = 0; j < mesh.Polygons[i].Length; j++) {
 
+                        // Apply rotation to vertex
                         Vector rotated = Matrix3D.MatMul(mesh.Polygons[i][j], rotMatrix);
 
-                        float distance = 1.5f;
-                        float z = 1.0f / (distance - rotated.Z);
+                        // Translate vertex (slightly) to not draw on top of camera
+                        Vector translated = new Vector(rotated.X, rotated.Y, rotated.Z + 1.2f);
 
-                        Matrix3D perspProjection = new Matrix3D() {
-
-                            Matrix = new float[2, 3] {
-                                {z, 0, 0},
-                                {0, z, 0},
-                            }
-                        };
-
-                        projected[i][j] = ortho ? Matrix3D.MatMul(rotated, orthoProjection) : Matrix3D.MatMul(rotated, perspProjection);
+                        projected[i][j] = ortho ? Matrix3D.MatMul(translated, orthoProjection) : Matrix3D.MatMul4x4(translated, perspective);
 
                         // Scale Vectors
                         projected[i][j] *= projectionScale;

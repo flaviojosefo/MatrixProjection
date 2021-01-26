@@ -7,7 +7,8 @@ namespace MatrixProjection {
 
     public class DrawString {
 
-        private const float xOffset = 2.0f;
+        // Ratio between charaters' width and height
+        private const float X_OFFSET = 2.0f;
 
         private readonly int consoleX, consoleY;
 
@@ -39,7 +40,7 @@ namespace MatrixProjection {
 
             if (!OutOfBounds(v)) {
 
-                int x = (int)((v.X * xOffset) + (consoleX / 2.0f));
+                int x = (int)((v.X * X_OFFSET) + (consoleX / 2.0f));
                 int y = -(int)(v.Y - (consoleY / 2.0f));
 
                 int index = x + (y * consoleX);
@@ -83,7 +84,7 @@ namespace MatrixProjection {
 
         private bool OutOfBounds(Vector v) {
 
-            if ((int)((v.X * xOffset) + (consoleX / 2.0f)) >= consoleX || (int)((v.X * xOffset) + (consoleX / 2.0f)) < 0 ||
+            if ((int)((v.X * X_OFFSET) + (consoleX / 2.0f)) >= consoleX || (int)((v.X * X_OFFSET) + (consoleX / 2.0f)) < 0 ||
                -(int)(v.Y - (consoleY / 2.0f)) >= (consoleY - 1) || -(int)(v.Y - (consoleY / 2.0f)) < 0) {
 
                 return true;
