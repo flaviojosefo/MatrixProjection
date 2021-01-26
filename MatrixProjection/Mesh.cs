@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MatrixProjection {
 
-    public abstract class Mesh {
+    public class Mesh {
 
         // Mesh = Collection of polygons, which is a collection of vertices (tris or quads)
         public Vector[][] Polygons { get; protected set; }
