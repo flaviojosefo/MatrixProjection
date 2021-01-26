@@ -6,32 +6,35 @@ using System.Threading.Tasks;
 
 namespace MatrixProjection {
 
-    public class Cube : Shape {
+    public class Cube : Mesh {
 
-        public override Vector[] Vertices { get; protected set; }
+        public Cube(float size) {
 
-        public Cube() {
+            Polygons = new Vector[6][];
 
-            Vertices = new Vector[8];
+            CreateQuad(new Vector(size * 0.5f, 0, 0),
+                       new Vector(0, -size * 0.5f, 0),
+                       new Vector(0, 0, size * 0.5f));
 
-            Vertices[0] = new Vector(0.5f, 0.5f, 0.5f);
-            Vertices[1] = new Vector(-0.5f, 0.5f, 0.5f);
-            Vertices[2] = new Vector(-0.5f, -0.5f, 0.5f);
-            Vertices[3] = new Vector(0.5f, -0.5f, 0.5f);
-            Vertices[4] = new Vector(0.5f, 0.5f, -0.5f);
-            Vertices[5] = new Vector(-0.5f, 0.5f, -0.5f);
-            Vertices[6] = new Vector(-0.5f, -0.5f, -0.5f);
-            Vertices[7] = new Vector(0.5f, -0.5f, -0.5f);
-        }
+            CreateQuad(new Vector(-size * 0.5f, 0, 0),
+                       new Vector(0, size * 0.5f, 0),
+                       new Vector(0, 0, size * 0.5f));
 
-        public override void DrawShape(DrawString draw, Vector[] projected) {
+            CreateQuad(new Vector(0, size * 0.5f, 0),
+                       new Vector(size * 0.5f, 0),
+                       new Vector(0, 0, size * 0.5f));
 
-            for (int i = 0; i < Vertices.Length / 2; i++) {
+            CreateQuad(new Vector(0, -size * 0.5f, 0),
+                       new Vector(-size * 0.5f, 0),
+                       new Vector(0, 0, size * 0.5f));
 
-                draw.AddLine(projected[i], projected[i + 4]);
-                draw.AddLine(projected[i], projected[(i + 1) % 4]);
-                draw.AddLine(projected[i + 4], projected[((i + 1) % 4) + 4]);
-            }
+            CreateQuad(new Vector(0, 0, size * 0.5f),
+                       new Vector(-size * 0.5f, 0),
+                       new Vector(0, size * 0.5f, 0));
+
+            CreateQuad(new Vector(0, 0, -size * 0.5f),
+                       new Vector(size * 0.5f, 0),
+                       new Vector(0, size * 0.5f, 0));
         }
     }
 }

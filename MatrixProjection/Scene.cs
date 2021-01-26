@@ -13,9 +13,9 @@ namespace MatrixProjection {
 
         private readonly float deltaTime;
 
-        private readonly Shape shape;
+        private readonly Mesh mesh;
 
-        private readonly Vector[] projected;
+        private readonly Vector[][] projected;
         private readonly float projectionScale;
 
         private float xAngle;
@@ -45,13 +45,13 @@ namespace MatrixProjection {
 
         //Stopwatch time1 = new Stopwatch();
 
-        public Scene(int frameRate, Shape shape, float projectionScale = 20.0f) {
+        public Scene(int frameRate, Mesh mesh, float projectionScale = 20.0f) {
 
             deltaTime = 1000 / frameRate;
 
-            this.shape = shape;
+            this.mesh = mesh;
 
-            projected = new Vector[shape.Vertices.Length];
+            projected = new Vector[mesh.Polygons.Length][];
 
             this.projectionScale = projectionScale;
         }
@@ -88,7 +88,7 @@ namespace MatrixProjection {
             }
         }
 
-        // Render 1st
+        // Render Meshes, not Shapes
         private void Render3D() {
 
             if (rotate) {
@@ -124,26 +124,30 @@ namespace MatrixProjection {
                 Matrix3D rotMatrix = Matrix3D.MatMul(rotationZ, rotationY);
                 rotMatrix = Matrix3D.MatMul(rotMatrix, rotationX);
 
-                // Calculate
-                for (int i = 0; i < shape.Vertices.Length; i++) {
+                for (int i = 0; i < mesh.Polygons.Length; i++) {
 
-                    Vector rotated = Matrix3D.MatMul(shape.Vertices[i], rotMatrix);
+                    projected[i] = new Vector[mesh.Polygons[i].Length];
 
-                    float distance = 1.5f;
-                    float z = 1.0f / (distance - rotated.Z);
+                    for (int j = 0; j < mesh.Polygons[i].Length; j++) {
 
-                    Matrix3D perspProjection = new Matrix3D() {
+                        Vector rotated = Matrix3D.MatMul(mesh.Polygons[i][j], rotMatrix);
 
-                        Matrix = new float[2, 3] {
-                            {z, 0, 0},
-                            {0, z, 0},
-                        }
-                    };
+                        float distance = 1.5f;
+                        float z = 1.0f / (distance - rotated.Z);
 
-                    projected[i] = ortho ? Matrix3D.MatMul(rotated, orthoProjection) : Matrix3D.MatMul(rotated, perspProjection);
+                        Matrix3D perspProjection = new Matrix3D() {
 
-                    // Scale Vectors
-                    projected[i] *= projectionScale;
+                            Matrix = new float[2, 3] {
+                                {z, 0, 0},
+                                {0, z, 0},
+                            }
+                        };
+
+                        projected[i][j] = ortho ? Matrix3D.MatMul(rotated, orthoProjection) : Matrix3D.MatMul(rotated, perspProjection);
+
+                        // Scale Vectors
+                        projected[i][j] *= projectionScale;
+                    }
                 }
 
                 if (rotateX) xAngle -= 0.01f;
@@ -151,8 +155,7 @@ namespace MatrixProjection {
                 if (rotateZ) zAngle -= 0.01f;
             }
 
-            // Draw Shape
-            shape.DrawShape(draw, projected);
+            draw.AddMesh(projected);
         }
 
         // Render 2nd

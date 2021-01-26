@@ -65,19 +65,19 @@ namespace MatrixProjection {
             switch(optionN + 1) {
 
                 case 1:
-                    scene = new Scene(60, new Cube());
+                    scene = new Scene(60, new Cube(1), 20);
                     break;
 
                 case 2:
-                    scene = new Scene(60, new QuadPyramid());
+                    //scene = new Scene(60, new QuadPyramid());
                     break;
 
                 case 3:
-                    scene = new Scene(60, new TriPyramid());
+                    //scene = new Scene(60, new TriPyramid());
                     break;
 
                 case 4:
-                    scene = new Scene(60, new Engram(), 60);
+                    //scene = new Scene(60, new Engram(), 60);
                     break;
 
                 case 5:

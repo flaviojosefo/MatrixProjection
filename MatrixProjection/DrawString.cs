@@ -64,6 +64,17 @@ namespace MatrixProjection {
             AddPoint(from += line);
         }
 
+        public void AddMesh(Vector[][] projected) {
+
+            for (int i = 0; i < projected.Length; i++) {
+
+                for (int j = 0; j < projected[i].Length; j++) {
+
+                    AddLine(projected[i][j], projected[i][(j + 1) % projected[i].Length]);
+                }
+            }
+        }
+
         public void DrawFrame() {
 
             Console.SetCursorPosition(0, 0);
