@@ -47,8 +47,10 @@
     <Compile Include="Draw.cs" />
     <Compile Include="DrawString.cs" />
     <Compile Include="Engram.cs" />
+    <Compile Include="ExampleMesh.cs" />
     <Compile Include="Matrix3D.cs" />
     <Compile Include="Menu.cs" />
+    <Compile Include="Mesh.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuadPyramid.cs" />
