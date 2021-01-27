@@ -8,9 +8,9 @@ namespace MatrixProjection {
 
     public class QuadPyramid : Mesh {
 
-        public QuadPyramid() {
+        public override Vector[][] Polygons { get; protected set; } = new Vector[6][];
 
-            Polygons = new Vector[6][];
+        public QuadPyramid() {
 
             // Front
             CreateTri(new Vector(-0.5f, -0.5f, 0.5f),

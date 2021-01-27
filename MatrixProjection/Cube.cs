@@ -8,11 +8,11 @@ namespace MatrixProjection {
 
     public class Cube : Mesh {
 
+        public override Vector[][] Polygons { get; protected set; } = new Vector[12][];
+
         public Cube(bool tris = false, float size = 1) {
 
             if (tris) {
-
-                Polygons = new Vector[12][];
 
                 // Front
                 CreateTri(new Vector(-size * 0.5f, -size * 0.5f, size * 0.5f),

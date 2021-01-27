@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace MatrixProjection {
 
-    public class Mesh {
+    public abstract class Mesh {
 
         // Mesh = Collection of polygons, which is a collection of vertices (tris or quads)
-        public Vector[][] Polygons { get; protected set; }
+        public abstract Vector[][] Polygons { get; protected set; }
 
         protected void CreateQuad(Vector origin, Vector axis0, Vector axis1) {
 
