@@ -6,27 +6,45 @@ using System.Threading.Tasks;
 
 namespace MatrixProjection {
 
-    public class TriPyramid : Shape {
+    public class TriPyramid : Mesh {
 
-        public override Vector[] Vertices { get; protected set; }
+        public override Vector[][] Polygons { get; protected set; } = new Vector[4][];
 
         public TriPyramid() {
 
-            Vertices = new Vector[4];
+            // The Vector from which we make the perfect equilateral triangular base
+            // Changing this Vector increases the base's area
+            Vector firstVertex = new Vector(0.0f, -0.6f, 0.6f);
 
-            Vertices[0] = new Vector(0.0f, -0.5f, -0.6f);
-            Vertices[1] = new Vector(-Vertices[0].Z * (float)Math.Sin((Math.PI * -120) / 180), -0.5f, Vertices[0].Z * (float)Math.Cos((Math.PI * -120) / 180));
-            Vertices[2] = new Vector(-Vertices[0].Z * (float)Math.Sin((Math.PI * 120) / 180), -0.5f, Vertices[0].Z * (float)Math.Cos((Math.PI * 120) / 180));
-            Vertices[3] = new Vector(0.0f, 1.0f, 0.0f);
-        }
+            // The vertex at the top of the pyramid
+            Vector topVertex = new Vector(0.0f, 1.0f, 0.0f);
 
-        public override void DrawShape(DrawString draw, Vector[] projected) {
+            // Pre calculate the base, so we don't have to repeat Sin and Cos related calculations
+            Vector[] triBase = new Vector[3] {
+                firstVertex,
+                new Vector(-firstVertex.Z * (float)Math.Sin((Math.PI * -120.0f) / 180.0f), firstVertex.Y, firstVertex.Z * (float)Math.Cos((Math.PI * -120.0f) / 180.0f)),
+                new Vector(-firstVertex.Z * (float)Math.Sin((Math.PI * 120.0f) / 180.0f), firstVertex.Y, firstVertex.Z * (float)Math.Cos((Math.PI * 120.0f) / 180.0f))
+            };
 
-            for (int i = 0; i < Vertices.Length - 1; i++) {
+            // Front
+            CreateTri(triBase[2],
+                      topVertex,
+                      triBase[1]);
 
-                draw.AddLine(projected[i], projected[(i + 1) % 3]);
-                draw.AddLine(projected[i], projected[3]);
-            }
+            // Right
+            CreateTri(triBase[1],
+                      topVertex,
+                      triBase[0]);
+
+            // Left
+            CreateTri(triBase[0],
+                      topVertex,
+                      triBase[2]);
+
+            // Bottom
+            CreateTri(triBase[0],
+                      triBase[1],
+                      triBase[2]);
         }
     }
 }
