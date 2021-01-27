@@ -11,6 +11,8 @@ namespace MatrixProjection {
 
         static void Main(string[] args) {
 
+            // Adapted to Squared font (8x8 pixels)
+            // If ratio between pixel size changes, change 'X_OFFSET' in 'DrawString' class
             Menu menu = new Menu(120, 80);
             menu.ShowOptions();
         }
