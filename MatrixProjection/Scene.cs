@@ -43,7 +43,7 @@ namespace MatrixProjection {
             }
         };
 
-        Matrix3D perspective = new Matrix3D() { Matrix = new float[4, 4] };
+        Matrix3D perspProjection = new Matrix3D() { Matrix = new float[4, 4] };
 
         //Stopwatch time1 = new Stopwatch();
 
@@ -68,15 +68,18 @@ namespace MatrixProjection {
             // Perspective Projection
             float nearPlane = 0.1f;
             float farPlane = 1000.0f;
-            float fov = 90.0f;
-            float aspectRatio = 1.0f; // Console.WindowWidth / (float)(Console.WindowHeight); Height of a character 2x1 (width x height)
-            float fovRad = (float)(1.0f / Math.Tan((double)(fov * 0.5f / 180.0f * Math.PI)));
+            float fov = 60.0f;
+            float aspectRatio = Console.WindowWidth / (float)Console.WindowHeight; // Height of a character 2x1 (width x height)
+            float fovRad = (float)Math.Tan(fov * 0.5f * Math.PI / 180.0f);
 
-            perspective.Matrix[0, 0] = aspectRatio * fovRad;
-            perspective.Matrix[1, 1] = fovRad;
-            perspective.Matrix[2, 2] = farPlane / (farPlane - nearPlane);
-            perspective.Matrix[3, 2] = (-farPlane * nearPlane) / (farPlane - nearPlane);
-            perspective.Matrix[2, 3] = 1.0f;
+            perspProjection.Matrix[0, 0] = 1.0f / (aspectRatio * fovRad);
+            perspProjection.Matrix[1, 1] = 1.0f / fovRad;
+            perspProjection.Matrix[2, 2] = -(farPlane + nearPlane) / (farPlane - nearPlane);
+            perspProjection.Matrix[3, 2] = -(2.0f * farPlane * nearPlane) / (farPlane - nearPlane);
+            perspProjection.Matrix[2, 3] = 1.0f;
+            Console.Write(perspProjection);
+            Console.ReadKey();
+            // ######################
         }
 
         public void Update() {
@@ -151,7 +154,7 @@ namespace MatrixProjection {
                         // Translate vertex (slightly) to not draw on top of camera
                         Vector translated = new Vector(rotated.X, rotated.Y, rotated.Z + 1.2f);
 
-                        projected[i][j] = ortho ? Matrix3D.MatMul(translated, orthoProjection) : Matrix3D.MatMul4x4(translated, perspective);
+                        projected[i][j] = ortho ? Matrix3D.MatMul(translated, orthoProjection) : Matrix3D.MatMul4x4(translated, perspProjection);
 
                         // Scale Vectors
                         projected[i][j] *= projectionScale;
