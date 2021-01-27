@@ -11,7 +11,7 @@ namespace MatrixProjection {
 
         static void Main(string[] args) {
 
-            Menu menu = new Menu(120, 50);
+            Menu menu = new Menu(120, 80);
             menu.ShowOptions();
         }
     }

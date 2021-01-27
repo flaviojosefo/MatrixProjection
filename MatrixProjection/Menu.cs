@@ -12,13 +12,13 @@ namespace MatrixProjection {
 
         private int optionN;
 
-        public Menu(int consoleX, int consoleY) {
+        public Menu(int width, int height) {
 
-            Console.WindowWidth = consoleX;
-            Console.WindowHeight = consoleY;
+            Console.WindowWidth = width;
+            Console.WindowHeight = height;
 
-            Console.BufferWidth = consoleX;
-            Console.BufferHeight = consoleY;
+            Console.BufferWidth = width;
+            Console.BufferHeight = height;
 
             Console.CursorVisible = false;
 
