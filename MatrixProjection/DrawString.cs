@@ -71,6 +71,7 @@ namespace MatrixProjection {
 
                 for (int j = 0; j < projected[i].Length; j++) {
 
+                    // Connects each point to the next (connects the last to the first)
                     AddLine(projected[i][j], projected[i][(j + 1) % projected[i].Length]);
                 }
             }

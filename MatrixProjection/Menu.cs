@@ -69,11 +69,11 @@ namespace MatrixProjection {
                     break;
 
                 case 2:
-                    //scene = new Scene(60, new QuadPyramid());
+                    scene = new Scene(60, new QuadPyramid());
                     break;
 
                 case 3:
-                    //scene = new Scene(60, new TriPyramid());
+                    scene = new Scene(60, new TriPyramid());
                     break;
 
                 case 4:
@@ -85,8 +85,8 @@ namespace MatrixProjection {
                     return;
             }
 
-            scene.Start();
-            scene.Update();
+            scene?.Start();
+            scene?.Update();
         }
     }
 }
