@@ -6,28 +6,40 @@ using System.Threading.Tasks;
 
 namespace MatrixProjection {
 
-    public class QuadPyramid : Shape {
-
-        public override Vector[] Vertices { get; protected set; }
+    public class QuadPyramid : Mesh {
 
         public QuadPyramid() {
 
-            Vertices = new Vector[5];
+            Polygons = new Vector[6][];
 
-            Vertices[0] = new Vector(0.5f, -0.5f, 0.5f);
-            Vertices[1] = new Vector(-0.5f, -0.5f, 0.5f);
-            Vertices[2] = new Vector(-0.5f, -0.5f, -0.5f);
-            Vertices[3] = new Vector(0.5f, -0.5f, -0.5f);
-            Vertices[4] = new Vector(0.0f, 1.0f, 0.0f);
-        }
+            // Front
+            CreateTri(new Vector(-0.5f, -0.5f, 0.5f),
+                      new Vector(0.0f, 1.25f, 0.0f),
+                      new Vector(-0.5f, -0.5f, -0.5f));
 
-        public override void DrawShape(DrawString draw, Vector[] projected) {
+            // Right
+            CreateTri(new Vector(0.5f, -0.5f, 0.5f),
+                      new Vector(0.0f, 1.25f, 0.0f),
+                      new Vector(0.5f, -0.5f, -0.5f));
 
-            for (int i = 0; i < Vertices.Length - 1; i++) {
+            // Back
+            CreateTri(new Vector(0.5f, -0.5f, -0.5f),
+                      new Vector(0.0f, 1.25f, 0.0f),
+                      new Vector(-0.5f, -0.5f, -0.5f));
 
-                draw.AddLine(projected[i], projected[(i + 1) % 4]);
-                draw.AddLine(projected[i], projected[4]);
-            }
+            // Left
+            CreateTri(new Vector(-0.5f, -0.5f, -0.5f),
+                      new Vector(0.0f, 1.25f, 0.0f),
+                      new Vector(-0.5f, -0.5f, 0.5f));
+
+            // Bottom
+            CreateTri(new Vector(-0.5f, -0.5f, 0.5f),
+                      new Vector(-0.5f, -0.5f, -0.5f),
+                      new Vector(0.5f, -0.5f, -0.5f));
+
+            CreateTri(new Vector(-0.5f, -0.5f, 0.5f),
+                      new Vector(0.5f, -0.5f, -0.5f),
+                      new Vector(0.5f, -0.5f, 0.5f));
         }
     }
 }
