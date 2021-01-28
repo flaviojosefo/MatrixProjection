@@ -40,10 +40,9 @@ namespace MatrixProjection {
 
             if (!OutOfBounds(v)) {
 
-                int x = (int)((v.X * X_OFFSET) + (width / 2.0f));
-                int y = -(int)(v.Y - (height / 2.0f));
+                Vector screenVec = ConvertToScreen(v);
 
-                int index = x + (y * width);
+                int index = (int)screenVec.X + (int)(screenVec.Y * width);
 
                 frame[index] = symbol;
             }
@@ -85,8 +84,8 @@ namespace MatrixProjection {
 
         private bool OutOfBounds(Vector v) {
 
-            if ((int)((v.X * X_OFFSET) + (width / 2.0f)) >= width || (int)((v.X * X_OFFSET) + (width / 2.0f)) < 0 ||
-               -(int)(v.Y - (height / 2.0f)) >= (height - 1) || -(int)(v.Y - (height / 2.0f)) < 0) {
+            if (ConvertToScreen(v).X >= width || ConvertToScreen(v).X < 0 ||
+               ConvertToScreen(v).Y >= (height - 1) || ConvertToScreen(v).Y < 0) {
 
                 return true;
             }
@@ -109,6 +108,11 @@ namespace MatrixProjection {
             int index = (int)(windowCoord.X + (windowCoord.Y * width));
 
             frame[index] = character;
+        }
+
+        private Vector ConvertToScreen(Vector v) {
+
+            return new Vector((int)((v.X * X_OFFSET) + (width / 2.0f)), -(int)(v.Y - (height / 2.0f)));
         }
     }
 }
