@@ -66,19 +66,24 @@ namespace MatrixProjection {
             input.Start();
 
             // Perspective Projection
-            float nearPlane = 0.1f;
-            float farPlane = 1000.0f;
-            float fov = 60.0f;
-            float aspectRatio = Console.WindowWidth / (float)Console.WindowHeight; // Height of a character 2x1 (width x height)
-            float fovRad = (float)Math.Tan(fov * 0.5f * Math.PI / 180.0f);
 
-            perspProjection.Matrix[0, 0] = 1.0f / (aspectRatio * fovRad);
-            perspProjection.Matrix[1, 1] = 1.0f / fovRad;
-            perspProjection.Matrix[2, 2] = -(farPlane + nearPlane) / (farPlane - nearPlane);
-            perspProjection.Matrix[3, 2] = -(2.0f * farPlane * nearPlane) / (farPlane - nearPlane);
-            perspProjection.Matrix[2, 3] = 1.0f;
-            Console.Write(perspProjection);
-            Console.ReadKey();
+            /*Sources:
+             https://stackoverflow.com/questions/53245632/general-formula-for-perspective-projection-matrix
+             https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/building-basic-perspective-projection-matrix
+             */
+
+            float nearPlane = 0.1f;
+            float farPlane = 100.0f;
+            float fov = 60.0f;
+            float fovRad = 1.0f / (float)Math.Tan(fov * 0.5f * (Math.PI / 180.0f));
+
+            perspProjection.Matrix = new float[4, 4] {
+                {fovRad,0,0,0},
+                {0,fovRad,0,0},
+                {0,0,-farPlane / (farPlane - nearPlane),-(farPlane * nearPlane) / (farPlane - nearPlane)},
+                {0,0,1,0}
+            };
+
             // ######################
         }
 
