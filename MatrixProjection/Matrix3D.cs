@@ -46,11 +46,11 @@ namespace MatrixProjection {
         public static Vector MatMul4x4(Vector v, Matrix3D m) {
 
             Vector multVector = new Vector(
-                v.X * m.Matrix[0, 0] + v.Y * m.Matrix[1, 0] + v.Z * m.Matrix[2, 0] + m.Matrix[3, 0],
-                v.X * m.Matrix[0, 1] + v.Y * m.Matrix[1, 1] + v.Z * m.Matrix[2, 1] + m.Matrix[3, 1],
-                v.X * m.Matrix[0, 2] + v.Y * m.Matrix[1, 2] + v.Z * m.Matrix[2, 2] + m.Matrix[3, 2]);
+                v.X * m.Matrix[0, 0] + v.Y * m.Matrix[0, 1] + v.Z * m.Matrix[0, 2] + m.Matrix[0, 3],
+                v.X * m.Matrix[1, 0] + v.Y * m.Matrix[1, 1] + v.Z * m.Matrix[1, 2] + m.Matrix[1, 3],
+                v.X * m.Matrix[2, 0] + v.Y * m.Matrix[2, 1] + v.Z * m.Matrix[2, 2] + m.Matrix[2, 3]);
 
-            float w = v.X * m.Matrix[0, 3] + v.Y * m.Matrix[1, 3] + v.Z * m.Matrix[2, 3] + m.Matrix[3, 3];
+            float w = v.X * m.Matrix[3, 0] + v.Y * m.Matrix[3, 1] + v.Z * m.Matrix[3, 2] + m.Matrix[3, 3];
 
             if (w != 0.0f) {
 
