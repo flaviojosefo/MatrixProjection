@@ -171,7 +171,7 @@ namespace MatrixProjection {
                 if (rotateZ) zAngle -= 0.01f;
             }
 
-            draw.AddMesh(projected);
+            draw.PlotMesh(projected);
         }
 
         // Render 2nd

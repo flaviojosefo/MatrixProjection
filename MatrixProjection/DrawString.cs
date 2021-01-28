@@ -36,7 +36,7 @@ namespace MatrixProjection {
             }
         }
 
-        public void AddPoint(Vector v, char symbol = '■') {
+        public void PlotPoint(Vector v, char symbol = '\u2588') { // '\u25A0' -> OLD BLOCK
 
             if (!OutOfBounds(v)) {
 
@@ -48,30 +48,14 @@ namespace MatrixProjection {
             }
         }
 
-        public void AddLine(Vector from, Vector to) {
-
-            int step = 10;
-
-            Vector line = (to - from) / step;
-
-            AddPoint(from);
-
-            for (int i = 0; i < step - 1; i++) {
-
-                AddPoint(from += line, '·');
-            }
-
-            AddPoint(from += line);
-        }
-
-        public void AddMesh(Vector[][] projected) {
+        public void PlotMesh(Vector[][] projected) {
 
             for (int i = 0; i < projected.Length; i++) {
 
                 for (int j = 0; j < projected[i].Length; j++) {
 
-                    // Connects each point to the next (connects the last to the first)
-                    AddLine(projected[i][j], projected[i][(j + 1) % projected[i].Length]);
+                    // Fills every possible spot between two given points to form a line
+                    PlotLine(projected[i][j], projected[i][(j + 1) % projected[i].Length]);
                 }
             }
         }
@@ -114,5 +98,103 @@ namespace MatrixProjection {
 
             return new Vector((int)((v.X * X_OFFSET) + (width / 2.0f)), -(int)(v.Y - (height / 2.0f)));
         }
+
+        #region Bresenham's Line Algorithm
+
+        /* Wiki w/ pseudocode -> https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm#All_cases
+         * 
+         * Note: Better results with 'int' values than with 'float' (less jittery) */
+
+        public void PlotLine(Vector from, Vector to) {
+
+            if (Math.Abs((int)to.Y - (int)from.Y) < Math.Abs((int)to.X - (int)from.X)) {
+
+                if ((int)from.X > (int)to.X) {
+
+                    PlotLineLow(to, from);
+
+                } else {
+
+                    PlotLineLow(from, to);
+                }
+
+            } else {
+
+                if ((int)from.Y > (int)to.Y) {
+
+                    PlotLineHigh(to, from);
+
+                } else {
+
+                    PlotLineHigh(from, to);
+                }
+            }
+        }
+
+        private void PlotLineLow(Vector from, Vector to) {
+
+            int dx = (int)to.X - (int)from.X;
+            int dy = (int)to.Y - (int)from.Y;
+
+            int yi = 1;
+
+            if (dy < 0) {
+
+                yi = -1;
+                dy = -dy;
+            }
+
+            int D = (2 * dy) - dx;
+            int y = (int)from.Y;
+
+            for (int i = (int)from.X; i <= (int)to.X; i++) {
+
+                PlotPoint(new Vector(i, y));
+
+                if (D > 0) {
+
+                    y += yi;
+                    D += 2 * (dy - dx);
+
+                } else {
+
+                    D += 2 * dy;
+                }
+            }
+        }
+
+        private void PlotLineHigh(Vector from, Vector to) {
+
+            int dx = (int)to.X - (int)from.X;
+            int dy = (int)to.Y - (int)from.Y;
+
+            int xi = 1;
+
+            if (dx < 0) {
+
+                xi = -1;
+                dx = -dx;
+            }
+
+            int D = (2 * dx) - dy;
+            int x = (int)from.X;
+
+            for (int i = (int)from.Y; i < (int)to.Y; i++) {
+
+                PlotPoint(new Vector(x, i));
+
+                if (D > 0) {
+
+                    x += xi;
+                    D += 2 * (dx - dy);
+
+                } else {
+
+                    D += 2 * dx;
+                }
+            }
+        }
+
+        #endregion
     }
 }
