@@ -42,9 +42,9 @@ namespace MatrixProjection {
                       triBase[2]);
 
             // Bottom
-            CreateTri(triBase[0],
+            CreateTri(triBase[2],
                       triBase[1],
-                      triBase[2]);
+                      triBase[0]);
         }
     }
 }

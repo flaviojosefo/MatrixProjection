@@ -15,58 +15,58 @@ namespace MatrixProjection {
             if (tris) {
 
                 // Front
-                CreateTri(new Vector(-size * 0.5f, -size * 0.5f, size * 0.5f),
-                          new Vector(-size * 0.5f, size * 0.5f, size * 0.5f),
-                          new Vector(size * 0.5f, size * 0.5f, size * 0.5f));
-
-                CreateTri(new Vector(-size * 0.5f, -size * 0.5f, size * 0.5f),
-                          new Vector(size * 0.5f, size * 0.5f, size * 0.5f),
-                          new Vector(size * 0.5f, -size * 0.5f, size * 0.5f));
-
-                // Right
-                CreateTri(new Vector(size * 0.5f, -size * 0.5f, size * 0.5f),
-                          new Vector(size * 0.5f, size * 0.5f, size * 0.5f),
+                CreateTri(new Vector(-size * 0.5f, -size * 0.5f, -size * 0.5f),
+                          new Vector(-size * 0.5f, size * 0.5f, -size * 0.5f),
                           new Vector(size * 0.5f, size * 0.5f, -size * 0.5f));
 
-                CreateTri(new Vector(size * 0.5f, -size * 0.5f, size * 0.5f),
+                CreateTri(new Vector(-size * 0.5f, -size * 0.5f, -size * 0.5f),
                           new Vector(size * 0.5f, size * 0.5f, -size * 0.5f),
                           new Vector(size * 0.5f, -size * 0.5f, -size * 0.5f));
 
-                // Back
+                // Right
                 CreateTri(new Vector(size * 0.5f, -size * 0.5f, -size * 0.5f),
                           new Vector(size * 0.5f, size * 0.5f, -size * 0.5f),
-                          new Vector(-size * 0.5f, size * 0.5f, -size * 0.5f));
+                          new Vector(size * 0.5f, size * 0.5f, size * 0.5f));
 
                 CreateTri(new Vector(size * 0.5f, -size * 0.5f, -size * 0.5f),
-                          new Vector(-size * 0.5f, size * 0.5f, -size * 0.5f),
-                          new Vector(-size * 0.5f, -size * 0.5f, -size * 0.5f));
+                          new Vector(size * 0.5f, size * 0.5f, size * 0.5f),
+                          new Vector(size * 0.5f, -size * 0.5f, size * 0.5f));
 
-                // Left
-                CreateTri(new Vector(-size * 0.5f, -size * 0.5f, -size * 0.5f),
-                          new Vector(-size * 0.5f, size * 0.5f, -size * 0.5f),
+                // Back
+                CreateTri(new Vector(size * 0.5f, -size * 0.5f, size * 0.5f),
+                          new Vector(size * 0.5f, size * 0.5f, size * 0.5f),
                           new Vector(-size * 0.5f, size * 0.5f, size * 0.5f));
 
-                CreateTri(new Vector(-size * 0.5f, -size * 0.5f, -size * 0.5f),
+                CreateTri(new Vector(size * 0.5f, -size * 0.5f, size * 0.5f),
                           new Vector(-size * 0.5f, size * 0.5f, size * 0.5f),
                           new Vector(-size * 0.5f, -size * 0.5f, size * 0.5f));
 
-                // Top
-                CreateTri(new Vector(-size * 0.5f, size * 0.5f, size * 0.5f),
-                          new Vector(-size * 0.5f, size * 0.5f, -size * 0.5f),
-                          new Vector(size * 0.5f, size * 0.5f, -size * 0.5f));
+                // Left
+                CreateTri(new Vector(-size * 0.5f, -size * 0.5f, size * 0.5f),
+                          new Vector(-size * 0.5f, size * 0.5f, size * 0.5f),
+                          new Vector(-size * 0.5f, size * 0.5f, -size * 0.5f));
 
-                CreateTri(new Vector(-size * 0.5f, size * 0.5f, size * 0.5f),
-                          new Vector(size * 0.5f, size * 0.5f, -size * 0.5f),
+                CreateTri(new Vector(-size * 0.5f, -size * 0.5f, size * 0.5f),
+                          new Vector(-size * 0.5f, size * 0.5f, -size * 0.5f),
+                          new Vector(-size * 0.5f, -size * 0.5f, -size * 0.5f));
+
+                // Top
+                CreateTri(new Vector(-size * 0.5f, size * 0.5f, -size * 0.5f),
+                          new Vector(-size * 0.5f, size * 0.5f, size * 0.5f),
                           new Vector(size * 0.5f, size * 0.5f, size * 0.5f));
 
-                // Bottom
-                CreateTri(new Vector(-size * 0.5f, -size * 0.5f, size * 0.5f),
-                          new Vector(-size * 0.5f, -size * 0.5f, -size * 0.5f),
-                          new Vector(size * 0.5f, -size * 0.5f, size * 0.5f));
+                CreateTri(new Vector(-size * 0.5f, size * 0.5f, -size * 0.5f),
+                          new Vector(size * 0.5f, size * 0.5f, size * 0.5f),
+                          new Vector(size * 0.5f, size * 0.5f, -size * 0.5f));
 
-                CreateTri(new Vector(size * 0.5f, -size * 0.5f, size * 0.5f),
-                          new Vector(-size * 0.5f, -size * 0.5f, -size * 0.5f),
-                          new Vector(size * 0.5f, -size * 0.5f, -size * 0.5f));
+                // Bottom
+                CreateTri(new Vector(-size * 0.5f, -size * 0.5f, -size * 0.5f),
+                          new Vector(size * 0.5f, -size * 0.5f, size * 0.5f),
+                          new Vector(-size * 0.5f, -size * 0.5f, size * 0.5f));
+
+                CreateTri(new Vector(-size * 0.5f, -size * 0.5f, -size * 0.5f),
+                          new Vector(size * 0.5f, -size * 0.5f, -size * 0.5f),
+                          new Vector(size * 0.5f, -size * 0.5f, size * 0.5f));
 
             } else {
 

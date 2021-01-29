@@ -52,6 +52,8 @@ namespace MatrixProjection {
 
             for (int i = 0; i < projected.Length; i++) {
 
+                if (OccludedBackface(projected[i])) continue;
+
                 for (int j = 0; j < projected[i].Length; j++) {
 
                     // Fills every possible spot between two given points to form a line
@@ -97,6 +99,21 @@ namespace MatrixProjection {
         private Vector ConvertToScreen(Vector v) {
 
             return new Vector((int)((v.X * X_OFFSET) + (width / 2.0f)), -(int)(v.Y - (height / 2.0f)));
+        }
+
+        private bool OccludedBackface(Vector[] polygon) {
+
+            // Shoelace formula: https://en.wikipedia.org/wiki/Shoelace_formula#Statement
+            // Division by 2 is not necessary, since all we care about is if the value is positive/negative
+
+            float sum = 0.0f;
+
+            for (int i = 0; i < polygon.Length; i++) {
+
+                sum += (polygon[i].X * polygon[(i + 1) % polygon.Length].Y) - (polygon[i].Y * polygon[(i + 1) % polygon.Length].X);
+            }
+
+            return sum >= 0;
         }
 
         #region Bresenham's Line Algorithm
