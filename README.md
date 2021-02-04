@@ -1,2 +1,2 @@
 # MatrixProjection
-A 3D based Camera for the Windows Console.
+A 3D Engine running on the Windows Console.
