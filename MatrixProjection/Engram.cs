@@ -8,8 +8,6 @@ namespace MatrixProjection {
 
     public class Engram : Shape {
 
-        public override Vector[] Vertices { get; protected set; }
-
         private (int vertex1, int vertex2)[] connections;
 
         public Engram() {
@@ -22,7 +20,7 @@ namespace MatrixProjection {
 
             for (int i = 0; i < connections.Length; i++) {
 
-                draw.AddLine(projected[connections[i].vertex1], projected[connections[i].vertex2]);
+                //draw.AddLine(projected[connections[i].vertex1], projected[connections[i].vertex2]);
             }
         }
 
