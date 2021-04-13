@@ -107,7 +107,7 @@ namespace MatrixProjection {
 
                 for (int j = 0; j < Matrix.GetLength(1); j++) {
 
-                    mat += $"{Matrix[j, i]} ";
+                    mat += $"{Matrix[i, j]} ";
                 }
 
                 mat += '\n';
