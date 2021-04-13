@@ -35,7 +35,7 @@ namespace MatrixProjection {
         private bool rotateY = true;
         private bool rotateZ = false;
 
-        Matrix3D orthoProjection = new Matrix3D() {
+        private readonly Matrix3D orthoProjection = new Matrix3D() {
 
             Matrix = new float[2, 3] {
                 {1, 0, 0},
@@ -43,7 +43,7 @@ namespace MatrixProjection {
             }
         };
 
-        Matrix3D perspProjection = new Matrix3D() { Matrix = new float[4, 4] };
+        private readonly Matrix3D perspProjection = new Matrix3D() { Matrix = new float[4, 4] };
 
         //Stopwatch time1 = new Stopwatch();
 
@@ -171,7 +171,8 @@ namespace MatrixProjection {
                 if (rotateZ) zAngle -= 0.01f;
             }
 
-            draw.PlotMesh(projected);
+            draw.PlotFaces(projected);
+            //draw.PlotMesh(projected);
         }
 
         // Render 2nd
