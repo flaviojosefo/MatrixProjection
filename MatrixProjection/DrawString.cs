@@ -121,8 +121,8 @@ namespace MatrixProjection {
             float invslope1 = (v2.X - v1.X) / (v2.Y - v1.Y);
             float invslope2 = (v3.X - v1.X) / (v3.Y - v1.Y);
 
-            float curx1 = v1.X;
-            float curx2 = v1.X;
+            float curx1 = v1.X + 0.5f; // +0.5f adds small offset to not draw
+            float curx2 = v1.X + 0.5f; // extra pixel on first top/bottom edge
 
             for (int scanlineY = (int)v1.Y; scanlineY <= v2.Y; scanlineY++) {
 
@@ -137,8 +137,8 @@ namespace MatrixProjection {
             float invslope1 = (v3.X - v1.X) / (v3.Y - v1.Y);
             float invslope2 = (v3.X - v2.X) / (v3.Y - v2.Y);
 
-            float curx1 = v3.X;
-            float curx2 = v3.X;
+            float curx1 = v3.X + 0.5f; // +0.5f adds small offset to not draw
+            float curx2 = v3.X + 0.5f; // extra pixel on first top/bottom edge
 
             for (int scanlineY = (int)v3.Y; scanlineY >= v1.Y; scanlineY--) {
 
