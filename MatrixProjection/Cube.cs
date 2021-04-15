@@ -8,7 +8,7 @@ namespace MatrixProjection {
 
     public class Cube : Mesh {
 
-        public override Vector[][] Polygons { get; protected set; } = new Vector[12][];
+        public override Triangle[] Polygons { get; protected set; } = new Triangle[12];
 
         public Cube(bool tris = false, float size = 1) {
 
@@ -68,7 +68,7 @@ namespace MatrixProjection {
                           new Vector(size * 0.5f, -size * 0.5f, -size * 0.5f),
                           new Vector(size * 0.5f, -size * 0.5f, size * 0.5f));
 
-            } else {
+            } /*else  {
 
                 Polygons = new Vector[6][];
 
@@ -95,7 +95,7 @@ namespace MatrixProjection {
                 CreateQuad(new Vector(0, 0, -size * 0.5f),
                            new Vector(size * 0.5f, 0, 0),
                            new Vector(0, size * 0.5f, 0));
-            }
+            }*/
         }
     }
 }

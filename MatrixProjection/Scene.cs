@@ -15,7 +15,7 @@ namespace MatrixProjection {
 
         private readonly Mesh mesh;
 
-        private readonly Vector[][] projected;
+        private readonly Triangle[] projected;
         private readonly float projectionScale;
 
         private float xAngle;
@@ -53,7 +53,7 @@ namespace MatrixProjection {
 
             this.mesh = mesh;
 
-            projected = new Vector[mesh.Polygons.Length][];
+            projected = new Triangle[mesh.Polygons.Length];
 
             this.projectionScale = projectionScale;
         }
@@ -114,57 +114,57 @@ namespace MatrixProjection {
         // Render Meshes, not Shapes
         private void Render3D() {
 
-            if (rotate) {
+            Matrix3D rotationX = new Matrix3D() {
 
-                Matrix3D rotationX = new Matrix3D() {
-
-                    Matrix = new float[3, 3] {
+                Matrix = new float[3, 3] {
                         {1, 0, 0},
                         {0, (float)Math.Cos(xAngle), (float)-Math.Sin(xAngle)},
                         {0, (float)Math.Sin(xAngle), (float)Math.Cos(xAngle)}
                     }
-                };
+            };
 
-                Matrix3D rotationY = new Matrix3D() {
+            Matrix3D rotationY = new Matrix3D() {
 
-                    Matrix = new float[3, 3] {
+                Matrix = new float[3, 3] {
                         {(float)Math.Cos(yAngle), 0, (float)Math.Sin(yAngle)},
                         {0, 1, 0},
                         {(float)-Math.Sin(yAngle), 0, (float)Math.Cos(yAngle)}
                     }
-                };
+            };
 
-                Matrix3D rotationZ = new Matrix3D() {
+            Matrix3D rotationZ = new Matrix3D() {
 
-                    Matrix = new float[3, 3] {
+                Matrix = new float[3, 3] {
                         {(float)Math.Cos(zAngle), (float)-Math.Sin(zAngle), 0},
                         {(float)Math.Sin(zAngle), (float)Math.Cos(zAngle), 0},
                         {0, 0, 1}
                     }
-                };
+            };
 
-                // XYZ rotation = (((Z * Y) * X) * Vector) or (Z×Y×X)×V
-                Matrix3D rotMatrix = Matrix3D.MatMul(rotationZ, rotationY);
-                rotMatrix = Matrix3D.MatMul(rotMatrix, rotationX);
+            // XYZ rotation = (((Z * Y) * X) * Vector) or (Z×Y×X)×V
+            Matrix3D rotMatrix = Matrix3D.MatMul(rotationZ, rotationY);
+            rotMatrix = Matrix3D.MatMul(rotMatrix, rotationX);
 
-                for (int i = 0; i < mesh.Polygons.Length; i++) {
+            for (int i = 0; i < mesh.Polygons.Length; i++) {
 
-                    projected[i] = new Vector[mesh.Polygons[i].Length];
+                projected[i] = new Triangle(new Vector[mesh.Polygons[i].VertexCount]);
 
-                    for (int j = 0; j < mesh.Polygons[i].Length; j++) {
+                for (int j = 0; j < mesh.Polygons[i].VertexCount; j++) {
 
-                        // Apply rotation to vertex
-                        Vector rotated = Matrix3D.MatMul(mesh.Polygons[i][j], rotMatrix);
+                    // Apply rotation to vertex
+                    Vector rotated = Matrix3D.MatMul(mesh.Polygons[i].Vertices[j], rotMatrix);
 
-                        // Translate vertex (slightly) to not draw on top of camera
-                        Vector translated = new Vector(rotated.X, rotated.Y, rotated.Z + 1.2f);
+                    // Translate vertex (slightly) to not draw on top of camera
+                    Vector translated = new Vector(rotated.X, rotated.Y, rotated.Z + 1.2f);
 
-                        projected[i][j] = ortho ? Matrix3D.MatMul(translated, orthoProjection) : Matrix3D.MatMul4x4(translated, perspProjection);
+                    projected[i].Vertices[j] = ortho ? Matrix3D.MatMul(translated, orthoProjection) : Matrix3D.MatMul4x4(translated, perspProjection);
 
-                        // Scale Vectors
-                        projected[i][j] *= projectionScale;
-                    }
+                    // Scale Vectors
+                    projected[i].Vertices[j] *= projectionScale;
                 }
+            }
+
+            if (rotate) {
 
                 if (rotateX) xAngle -= 0.01f;
                 if (rotateY) yAngle -= 0.01f;

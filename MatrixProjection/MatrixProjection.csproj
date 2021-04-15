@@ -55,6 +55,7 @@
     <Compile Include="QuadPyramid.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="Shape.cs" />
+    <Compile Include="Triangle.cs" />
     <Compile Include="TriPyramid.cs" />
     <Compile Include="Vector.cs" />
   </ItemGroup>

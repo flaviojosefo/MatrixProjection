@@ -36,7 +36,7 @@ namespace MatrixProjection {
             }
         }
 
-        public void PlotPoint(Vector v, char symbol = '\u2588') { // '\u25A0' -> OLD BLOCK
+        public void PlotPoint(Vector v, char symbol = '\u2588') { // '\u25A0' -> OLD BLOCK | '\u2593' -> Dark Shade | '\u2592' -> Medium Shade | '\u2591' -> Light Shade
 
             if (!OutOfBounds(v)) {
 
@@ -47,71 +47,75 @@ namespace MatrixProjection {
         }
 
         // Draws Mesh
-        public void PlotMesh(Vector[][] projected) {
+        public void PlotMesh(Triangle[] projected) {
 
             for (int i = 0; i < projected.Length; i++) {
 
                 if (BackfaceCulled(projected[i])) continue;
 
-                for (int j = 0; j < projected[i].Length; j++) {
+                for (int j = 0; j < projected[i].VertexCount; j++) {
 
-                    projected[i][j] = ConvertToScreen(projected[i][j]);
+                    projected[i].Vertices[j] = ConvertToScreen(projected[i].Vertices[j]);
                 }
 
-                for (int j = 0; j < projected[i].Length; j++) {
+                for (int j = 0; j < projected[i].VertexCount; j++) {
 
                     // Fills every possible spot between two given points to form a line
-                    PlotLine(projected[i][j], projected[i][(j + 1) % projected[i].Length]);
+                    PlotLine(projected[i].Vertices[j], projected[i].Vertices[(j + 1) % projected[i].VertexCount]);
                 }
             }
         }
 
         // Draws Solid
-        public void PlotFaces(Vector[][] projected) {
+        public void PlotFaces(Triangle[] projected) {
 
             for (int i = 0; i < projected.Length; i++) {
 
                 if (BackfaceCulled(projected[i])) continue;
 
-                for (int j = 0; j < projected[i].Length; j++) {
+                for (int j = 0; j < projected[i].VertexCount; j++) {
 
-                    projected[i][j] = ConvertToScreen(projected[i][j]);
+                    projected[i].Vertices[j] = ConvertToScreen(projected[i].Vertices[j]);
                 }
 
                 bool flat = false;
                 float prevY = -1;
-                Vector[] sorted = SortVertices(projected[i]);
+                Triangle sorted = SortVertices(projected[i]);
 
-                for (int j = 0; j < projected[i].Length; j++) {
+                for (int j = 0; j < projected[i].VertexCount; j++) {
 
                     // Verify if triangle is flat
-                    if ((int)projected[i][j].Y == (int)projected[i][(j + 1) % projected[i].Length].Y) {
+                    if ((int)projected[i].Vertices[j].Y == (int)projected[i].Vertices[(j + 1) % projected[i].VertexCount].Y) {
 
                         flat = true;
 
-                        if (prevY > projected[i][j].Y) {
+                        if (prevY > projected[i].Vertices[j].Y) {
 
-                            FillBottomFlatTriangle(sorted[0], sorted[1], sorted[2]);
+                            FillBottomFlatTriangle(sorted.Vertices[0], sorted.Vertices[1], sorted.Vertices[2]);
                             break;
 
                         } else {
 
-                            FillTopFlatTriangle(sorted[0], sorted[1], sorted[2]);
+                            FillTopFlatTriangle(sorted.Vertices[0], sorted.Vertices[1], sorted.Vertices[2]);
                             break;
                         }
 
                     } else {
 
-                        prevY = projected[i][j].Y;
+                        prevY = projected[i].Vertices[j].Y;
                     }
                 }
 
                 // if not, divide triangle into two flat, smaller triangles
                 if (!flat) {
 
-                    Vector v4 = new Vector(sorted[0].X + (sorted[1].Y - sorted[0].Y) / (sorted[2].Y - sorted[0].Y) * (sorted[2].X - sorted[0].X), sorted[1].Y);
-                    FillTopFlatTriangle(sorted[0], sorted[1], v4);
-                    FillBottomFlatTriangle(sorted[1], v4, sorted[2]);
+                    Vector v4 = new Vector(sorted.Vertices[0].X + (sorted.Vertices[1].Y - sorted.Vertices[0].Y) / 
+                                          (sorted.Vertices[2].Y - sorted.Vertices[0].Y) * 
+                                          (sorted.Vertices[2].X - sorted.Vertices[0].X), 
+                                           sorted.Vertices[1].Y);
+
+                    FillTopFlatTriangle(sorted.Vertices[0], sorted.Vertices[1], v4);
+                    FillBottomFlatTriangle(sorted.Vertices[1], v4, sorted.Vertices[2]);
                 }
             }
         }
@@ -189,16 +193,16 @@ namespace MatrixProjection {
             return new Vector((int)((v.X * X_OFFSET) + (width / 2.0f)), (int)(v.Y - (height / 2.0f)));
         }
 
-        private bool BackfaceCulled(Vector[] polygon) {
+        private bool BackfaceCulled(Triangle polygon) {
 
             // Shoelace formula: https://en.wikipedia.org/wiki/Shoelace_formula#Statement
             // Division by 2 is not necessary, since all we care about is if the value is positive/negative
 
             float sum = 0.0f;
 
-            for (int i = 0; i < polygon.Length; i++) {
+            for (int i = 0; i < polygon.VertexCount; i++) {
 
-                sum += (polygon[i].X * polygon[(i + 1) % polygon.Length].Y) - (polygon[i].Y * polygon[(i + 1) % polygon.Length].X);
+                sum += (polygon.Vertices[i].X * polygon.Vertices[(i + 1) % polygon.VertexCount].Y) - (polygon.Vertices[i].Y * polygon.Vertices[(i + 1) % polygon.VertexCount].X);
             }
 
             return sum >= 0;
@@ -206,22 +210,22 @@ namespace MatrixProjection {
 
         // Insertion Sort Algorithm
         // https://en.wikipedia.org/wiki/Insertion_sort
-        private Vector[] SortVertices(Vector[] polygon) {
+        private Triangle SortVertices(Triangle polygon) {
 
-            Vector[] polygonCopy = polygon;
+            Triangle polygonCopy = polygon;
 
-            for (int i = 1; i < polygonCopy.Length; i++) {
+            for (int i = 1; i < polygonCopy.VertexCount; i++) {
 
-                Vector chosen = polygonCopy[i];
+                Vector chosen = polygonCopy.Vertices[i];
                 int j = i - 1;
 
-                while (j >= 0 && polygonCopy[j].Y > chosen.Y) {
+                while (j >= 0 && polygonCopy.Vertices[j].Y > chosen.Y) {
 
-                    polygonCopy[j + 1] = polygonCopy[j];
+                    polygonCopy.Vertices[j + 1] = polygonCopy.Vertices[j];
                     j--;
                 }
 
-                polygonCopy[j + 1] = chosen;
+                polygonCopy.Vertices[j + 1] = chosen;
             }
 
             return polygonCopy;

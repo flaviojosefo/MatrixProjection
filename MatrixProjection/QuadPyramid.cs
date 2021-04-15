@@ -8,7 +8,7 @@ namespace MatrixProjection {
 
     public class QuadPyramid : Mesh {
 
-        public override Vector[][] Polygons { get; protected set; } = new Vector[6][];
+        public override Triangle[] Polygons { get; protected set; } = new Triangle[6];
 
         public QuadPyramid() {
 
