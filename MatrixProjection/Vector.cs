@@ -10,11 +10,18 @@ namespace MatrixProjection {
 
         public float Magnitude => GetMagnitude();
 
+        public Vector Normalized => this / Magnitude;
+
         public Vector (float x, float y, float z = 0) {
 
             X = x;
             Y = y;
             Z = z;
+        }
+
+        public static Vector operator -(Vector v) {
+
+            return new Vector(-v.X, -v.Y, -v.Z);
         }
 
         public static Vector operator +(Vector v1, Vector v2) {
@@ -51,6 +58,11 @@ namespace MatrixProjection {
             return new Vector((v1.Y * v2.Z) - (v1.Z * v2.Y),
                               (v1.Z * v2.X) - (v1.X * v2.Z),
                               (v1.X * v2.Y) - (v1.Y * v2.X));
+        }
+
+        public static float DotProduct(Vector v1, Vector v2) {
+
+            return (v1.X * v2.X) + (v1.Y * v2.Y) + (v1.Z * v2.Z);
         }
 
         public static float Distance(Vector v1, Vector v2) {

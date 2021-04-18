@@ -9,6 +9,7 @@ namespace MatrixProjection {
 
     public class Scene {
 
+        private Camera camera;
         private DrawString draw;
 
         private readonly float deltaTime;
@@ -35,15 +36,14 @@ namespace MatrixProjection {
         private bool rotateY = true;
         private bool rotateZ = false;
 
-        private readonly Matrix3D orthoProjection = new Matrix3D() {
-
-            Matrix = new float[2, 3] {
-                {1, 0, 0},
-                {0, 1, 0},
-            }
+        private Mat4x4 orthoProjection = new float[4, 4] {
+                {1, 0, 0, 0},
+                {0, 1, 0, 0},
+                {0, 0, 0, 0},
+                {0, 0, 0, 1}
         };
 
-        private readonly Matrix3D perspProjection = new Matrix3D() { Matrix = new float[4, 4] };
+        private Mat4x4 perspProjection;
 
         //Stopwatch time1 = new Stopwatch();
 
@@ -60,6 +60,7 @@ namespace MatrixProjection {
 
         public void Start() {
 
+            camera = new Camera();
             draw = new DrawString();
 
             input = new Thread(ManageInput);
@@ -77,7 +78,7 @@ namespace MatrixProjection {
             float fov = 60.0f;
             float fovRad = 1.0f / (float)Math.Tan(fov * 0.5f * (Math.PI / 180.0f));
 
-            perspProjection.Matrix = new float[4, 4] {
+            perspProjection = new float[4, 4] {
                 {fovRad,0,0,0},
                 {0,fovRad,0,0},
                 {0,0,-farPlane / (farPlane - nearPlane),-(farPlane * nearPlane) / (farPlane - nearPlane)},
@@ -114,36 +115,34 @@ namespace MatrixProjection {
         // Render Meshes, not Shapes
         private void Render3D() {
 
-            Matrix3D rotationX = new Matrix3D() {
+            //Mat4x4 camTranform = Mat4x4.MatMul(Mat4x4.VecToMat(camera.Position), Mat4x4.VecToMat())
 
-                Matrix = new float[3, 3] {
-                        {1, 0, 0},
-                        {0, (float)Math.Cos(xAngle), (float)-Math.Sin(xAngle)},
-                        {0, (float)Math.Sin(xAngle), (float)Math.Cos(xAngle)}
-                    }
+            Light simpleLight = new Light(new Vector(2, 0, 0));
+
+            Mat4x4 rotationX = new float[4, 4] {
+                {1, 0, 0, 0},
+                {0, (float)Math.Cos(xAngle), (float)-Math.Sin(xAngle), 0},
+                {0, (float)Math.Sin(xAngle), (float)Math.Cos(xAngle), 0},
+                {0, 0, 0, 1}
             };
 
-            Matrix3D rotationY = new Matrix3D() {
-
-                Matrix = new float[3, 3] {
-                        {(float)Math.Cos(yAngle), 0, (float)Math.Sin(yAngle)},
-                        {0, 1, 0},
-                        {(float)-Math.Sin(yAngle), 0, (float)Math.Cos(yAngle)}
-                    }
+            Mat4x4 rotationY = new float[4, 4] {
+                {(float)Math.Cos(yAngle), 0, (float)Math.Sin(yAngle), 0},
+                {0, 1, 0, 0},
+                {(float)-Math.Sin(yAngle), 0, (float)Math.Cos(yAngle), 0},
+                {0, 0, 0, 1}
             };
 
-            Matrix3D rotationZ = new Matrix3D() {
-
-                Matrix = new float[3, 3] {
-                        {(float)Math.Cos(zAngle), (float)-Math.Sin(zAngle), 0},
-                        {(float)Math.Sin(zAngle), (float)Math.Cos(zAngle), 0},
-                        {0, 0, 1}
-                    }
+            Mat4x4 rotationZ = new float[4, 4] {
+                {(float)Math.Cos(zAngle), (float)-Math.Sin(zAngle), 0, 0},
+                {(float)Math.Sin(zAngle), (float)Math.Cos(zAngle), 0, 0},
+                {0, 0, 1, 0},
+                {0, 0, 0, 1}
             };
 
             // XYZ rotation = (((Z * Y) * X) * Vector) or (Z×Y×X)×V
-            Matrix3D rotMatrix = Matrix3D.MatMul(rotationZ, rotationY);
-            rotMatrix = Matrix3D.MatMul(rotMatrix, rotationX);
+            Mat4x4 rotMatrix = Mat4x4.MatMul(rotationZ, rotationY);
+            rotMatrix = Mat4x4.MatMul(rotMatrix, rotationX);
 
             for (int i = 0; i < mesh.Polygons.Length; i++) {
 
@@ -152,12 +151,14 @@ namespace MatrixProjection {
                 for (int j = 0; j < mesh.Polygons[i].VertexCount; j++) {
 
                     // Apply rotation to vertex
-                    Vector rotated = Matrix3D.MatMul(mesh.Polygons[i].Vertices[j], rotMatrix);
+                    Vector rotated = Mat4x4.MatMul(mesh.Polygons[i].Vertices[j], rotMatrix);
 
                     // Translate vertex (slightly) to not draw on top of camera
                     Vector translated = new Vector(rotated.X, rotated.Y, rotated.Z + 1.2f);
 
-                    projected[i].Vertices[j] = ortho ? Matrix3D.MatMul(translated, orthoProjection) : Matrix3D.MatMul4x4(translated, perspProjection);
+                    Mat4x4 mvp = ortho ? Mat4x4.MatMul(orthoProjection, camera.ViewMatrix) : Mat4x4.MatMul(perspProjection, camera.ViewMatrix);
+
+                    projected[i].Vertices[j] = Mat4x4.MatMul(translated, mvp);
 
                     // Scale Vectors
                     projected[i].Vertices[j] *= projectionScale;
@@ -171,8 +172,9 @@ namespace MatrixProjection {
                 if (rotateZ) zAngle -= 0.01f;
             }
 
-            draw.PlotFaces(projected);
-            //draw.PlotMesh(projected);
+            //draw.PlotShadedFaces(projected, simpleLight);
+            //draw.PlotFaces(projected);
+            draw.PlotMesh(projected);
         }
 
         // Render 2nd
@@ -192,10 +194,24 @@ namespace MatrixProjection {
             menu[9] = "|                      |";
             menu[10] = "■----------------------■";
 
-
             for (int i = 0; i < menu.Length; i++) {
 
                 draw.AddText(new Vector(0, i), menu[i]);
+            }
+
+            string[] camInfo = new string[6];
+
+            camInfo[0] = "■-----------------------------■";
+            camInfo[1] = "|                             |";
+            camInfo[2] = "|     WASD to Move Camera     |";
+            camInfo[3] = "|   Q and E for Up and Down   |";
+            camInfo[4] = "|                             |";
+            camInfo[5] = "■-----------------------------■";
+
+            for (int i = 0; i < camInfo.Length; i++) {
+
+                int k = Console.WindowHeight - 1 + i - camInfo.Length;
+                draw.AddText(new Vector(0, k), camInfo[i]);
             }
 
             draw.AddText(new Vector(5, cursorY), '►');
@@ -203,7 +219,7 @@ namespace MatrixProjection {
 
         private void ManageInput() {
 
-            switch (Console.ReadKey().Key) {
+            switch (Console.ReadKey(true).Key) {
 
                 case ConsoleKey.UpArrow:
                     cursorY = cursorY > 2 ? cursorY - 1 : 8;
@@ -215,6 +231,30 @@ namespace MatrixProjection {
 
                 case ConsoleKey.Enter:
                     SelectOption();
+                    break;
+
+                case ConsoleKey.W:
+                    camera.Translate(new Vector(0, 0, 0.05f));    // Forward
+                    break;
+
+                case ConsoleKey.A:
+                    camera.Translate(new Vector(-0.05f, 0, 0));    // Left
+                    break;
+
+                case ConsoleKey.S:
+                    camera.Translate(new Vector(0, 0, -0.05f));     // Back
+                    break;
+
+                case ConsoleKey.D:
+                    camera.Translate(new Vector(0.05f, 0, 0));     // Right
+                    break;
+
+                case ConsoleKey.E:
+                    camera.Translate(new Vector(0, 0.05f, 0));     // Up
+                    break;
+
+                case ConsoleKey.Q:
+                    camera.Translate(new Vector(0, -0.05f, 0));    // Down
                     break;
             }
 

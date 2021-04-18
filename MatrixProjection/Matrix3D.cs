@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MatrixProjection {
 
-    public class Matrix3D {
+    public struct Matrix3D {
 
         public float[,] Matrix { get; set; }
 
         public Matrix3D Inverse => GetInverse();
-
-        public Matrix3D() { }
 
         public static Matrix3D VectToMat(Vector v) {
 
@@ -33,31 +27,31 @@ namespace MatrixProjection {
                               m.Matrix.GetLength(0) > 2 ? m.Matrix[2, 0] : 0);
         }
 
-        public static Vector MatMul(Vector v, Matrix3D m) {
+        public static Vector MatMul(Vector v, Matrix3D m1) {
 
-            return MatToVec(MatMul(m, VectToMat(v)));
+            Matrix3D m2 = VectToMat(v);
+
+            Matrix3D m3 = MatMul(m1, m2);
+
+            return MatToVec(m3);
         }
 
-        public static Matrix3D MatMul(Matrix3D m, Vector v) {
+        public static Matrix3D MatMul(Matrix3D m1, Vector v) {
 
-            return MatMul(m, VectToMat(v));
+            Matrix3D m2 = VectToMat(v);
+
+            return MatMul(m1, m2);
         }
 
         public static Vector MatMul4x4(Vector v, Matrix3D m) {
 
-            Vector multVector = new Vector(
+            Vector4 multVector = new Vector4(
                 v.X * m.Matrix[0, 0] + v.Y * m.Matrix[0, 1] + v.Z * m.Matrix[0, 2] + m.Matrix[0, 3],
                 v.X * m.Matrix[1, 0] + v.Y * m.Matrix[1, 1] + v.Z * m.Matrix[1, 2] + m.Matrix[1, 3],
-                v.X * m.Matrix[2, 0] + v.Y * m.Matrix[2, 1] + v.Z * m.Matrix[2, 2] + m.Matrix[2, 3]);
+                v.X * m.Matrix[2, 0] + v.Y * m.Matrix[2, 1] + v.Z * m.Matrix[2, 2] + m.Matrix[2, 3],
+                v.X * m.Matrix[3, 0] + v.Y * m.Matrix[3, 1] + v.Z * m.Matrix[3, 2] + m.Matrix[3, 3]);
 
-            float w = v.X * m.Matrix[3, 0] + v.Y * m.Matrix[3, 1] + v.Z * m.Matrix[3, 2] + m.Matrix[3, 3];
-
-            if (w != 0.0f) {
-
-                multVector /= w;
-            }
-
-            return multVector;
+            return (Vector)multVector;
         }
 
         public static Matrix3D MatMul(Matrix3D m1, Matrix3D m2) {
@@ -70,7 +64,7 @@ namespace MatrixProjection {
             if (colsM1 != rowsM2) {
 
                 Console.Write("Columns of M1 MUST match Rows of M2");
-                return null;
+                //return null;
             }
 
             float[,] newMatrix = new float[rowsM1, colsM2];
@@ -93,10 +87,10 @@ namespace MatrixProjection {
             return new Matrix3D() { Matrix = newMatrix };
         }
 
-        // Implement to 3x3 Matrix only?
+        // Implement to 4x4 Matrix only?
         private Matrix3D GetInverse() {
 
-            return null;
+            return new Matrix3D();
         }
 
         public override string ToString() {

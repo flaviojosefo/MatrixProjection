@@ -16,12 +16,14 @@ namespace MatrixProjection {
 
         private readonly StringBuilder frame;
 
+        private ShadeChar currChar = ShadeChar.Full;
+
         public DrawString() {
 
             width = Console.WindowWidth;
-            height = Console.WindowHeight;
+            height = Console.WindowHeight - 1;
 
-            totalPixels = width * (height - 1);
+            totalPixels = width * height;
 
             frame = new StringBuilder(totalPixels);
         }
@@ -36,13 +38,13 @@ namespace MatrixProjection {
             }
         }
 
-        public void PlotPoint(Vector v, char symbol = '\u2588') { // '\u25A0' -> OLD BLOCK | '\u2593' -> Dark Shade | '\u2592' -> Medium Shade | '\u2591' -> Light Shade
+        public void PlotPoint(Vector v) { // '\u25A0' -> OLD BLOCK | '\u2588' -> Full Block | '\u2593' -> Dark Shade | '\u2592' -> Medium Shade | '\u2591' -> Light Shade
 
             if (!OutOfBounds(v)) {
 
                 int index = (int)v.X + (int)(-v.Y * width);
 
-                frame[index] = symbol;
+                frame[index] = (char)currChar;
             }
         }
 
@@ -120,6 +122,15 @@ namespace MatrixProjection {
             }
         }
 
+        // Draws Solid with Shading - WIP
+        public void PlotShadedFaces(Triangle[] projected, Light light) {
+
+            //Vector lightDir = (light.Position - projected[i].Vertices[j]).Normalized;
+            //float intensity = Math.Max(0.0f, Vector.DotProduct(projected[i].Normal, lightDir));
+
+            //Shade(intensity);
+        }
+
         private void FillTopFlatTriangle(Vector v1, Vector v2, Vector v3) {
 
             float invslope1 = (v2.X - v1.X) / (v2.Y - v1.Y);
@@ -152,6 +163,30 @@ namespace MatrixProjection {
             }
         }
 
+        private void Shade(float lightIntensity) {
+
+            if (lightIntensity == 0.0f) {
+
+                currChar = ShadeChar.Null;
+
+            } else if (lightIntensity < 0.25f) {
+
+                currChar = ShadeChar.Low;
+
+            } else if (lightIntensity < 0.5f) {
+
+                currChar = ShadeChar.Medium;
+
+            } else if (lightIntensity < 0.75f) {
+
+                currChar = ShadeChar.High;
+
+            } else {
+
+                currChar = ShadeChar.Full;
+            }
+        }
+
         public void DrawFrame() {
 
             Console.SetCursorPosition(0, 0);
@@ -161,7 +196,7 @@ namespace MatrixProjection {
         private bool OutOfBounds(Vector v) {
 
             if (v.X >= width || v.X < 0 ||
-               -v.Y >= (height - 1) || -v.Y < 0) {
+               -v.Y >= height || -v.Y < 0) {
 
                 return true;
             }

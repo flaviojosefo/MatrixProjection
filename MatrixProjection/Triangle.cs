@@ -19,7 +19,7 @@ namespace MatrixProjection {
                 Vector u = Vertices[1] - Vertices[0];
                 Vector v = Vertices[2] - Vertices[0];
 
-                return Vector.CrossProduct(u, v);
+                return -Vector.CrossProduct(u, v).Normalized;
             }
         }
 
