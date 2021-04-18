@@ -204,7 +204,7 @@ namespace MatrixProjection {
             camInfo[0] = "■-----------------------------■";
             camInfo[1] = "|                             |";
             camInfo[2] = "|     WASD to Move Camera     |";
-            camInfo[3] = "|   Q and E for Up and Down   |";
+            camInfo[3] = "|   E and Q for Up and Down   |";
             camInfo[4] = "|                             |";
             camInfo[5] = "■-----------------------------■";
 
