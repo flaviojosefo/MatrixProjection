@@ -9,9 +9,6 @@ namespace MatrixProjection {
 
     public class Scene {
 
-        // Width / Height (Pixel ratio)
-        private const float ASPECT_RATIO = 8 / 6.0f;
-
         private Camera camera;
         private DrawString draw;
 
@@ -19,6 +16,7 @@ namespace MatrixProjection {
 
         private readonly Mesh mesh;
 
+        private readonly Triangle[] projected;
         private readonly float projectionScale;
 
         private float xAngle;
@@ -31,8 +29,6 @@ namespace MatrixProjection {
 
         private bool ortho;
 
-        private bool isMesh;
-
         private bool loop = true;
 
         private bool rotate = true;
@@ -41,7 +37,7 @@ namespace MatrixProjection {
         private bool rotateZ = false;
 
         private Mat4x4 orthoProjection = new float[4, 4] {
-                {1 * ASPECT_RATIO, 0, 0, 0},
+                {1, 0, 0, 0},
                 {0, 1, 0, 0},
                 {0, 0, 0, 0},
                 {0, 0, 0, 1}
@@ -51,11 +47,13 @@ namespace MatrixProjection {
 
         //Stopwatch time1 = new Stopwatch();
 
-        public Scene(int frameRate, Mesh mesh, float projectionScale = 100.0f) {
+        public Scene(int frameRate, Mesh mesh, float projectionScale = 20.0f) {
 
             deltaTime = 1000 / frameRate;
 
             this.mesh = mesh;
+
+            projected = new Triangle[mesh.Polygons.Length];
 
             this.projectionScale = projectionScale;
         }
@@ -75,12 +73,15 @@ namespace MatrixProjection {
              https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/building-basic-perspective-projection-matrix
              */
 
-            float fovRad = 1.0f / (float)Math.Tan(camera.Fov * 0.5f * (Math.PI / 180.0f));
+            float nearPlane = 0.1f;
+            float farPlane = 100.0f;
+            float fov = 60.0f;
+            float fovRad = 1.0f / (float)Math.Tan(fov * 0.5f * (Math.PI / 180.0f));
 
             perspProjection = new float[4, 4] {
-                {fovRad * ASPECT_RATIO,0,0,0},
+                {fovRad,0,0,0},
                 {0,fovRad,0,0},
-                {0,0,-camera.FarPlane / (camera.FarPlane - camera.NearPlane),-(camera.FarPlane * camera.NearPlane) / (camera.FarPlane - camera.NearPlane)},
+                {0,0,-farPlane / (farPlane - nearPlane),-(farPlane * nearPlane) / (farPlane - nearPlane)},
                 {0,0,1,0}
             };
 
@@ -111,13 +112,12 @@ namespace MatrixProjection {
             }
         }
 
-        // Render 3D Objects
+        // Render Meshes, not Shapes
         private void Render3D() {
 
             //Mat4x4 camTranform = Mat4x4.MatMul(Mat4x4.VecToMat(camera.Position), Mat4x4.VecToMat())
 
-            Light simpleLight = new Light { Direction = new Vector(0, 0, 1) };
-            simpleLight.Direction.Normalize();
+            Light simpleLight = new Light(new Vector(2, 0, 0));
 
             Mat4x4 rotationX = new float[4, 4] {
                 {1, 0, 0, 0},
@@ -144,106 +144,55 @@ namespace MatrixProjection {
             Mat4x4 rotMatrix = Mat4x4.MatMul(rotationZ, rotationY);
             rotMatrix = Mat4x4.MatMul(rotMatrix, rotationX);
 
-            Mat4x4 mvp = ortho ? Mat4x4.MatMul(orthoProjection, camera.ViewMatrix) : Mat4x4.MatMul(perspProjection, camera.ViewMatrix);
-
-            Triangle[] updatedTri = new Triangle[mesh.Polygons.Length];
-
             for (int i = 0; i < mesh.Polygons.Length; i++) {
 
-                updatedTri[i] = new Triangle(new Vector[mesh.Polygons[i].VertexCount]);
+                projected[i] = new Triangle(new Vector[mesh.Polygons[i].VertexCount]);
 
                 for (int j = 0; j < mesh.Polygons[i].VertexCount; j++) {
 
                     // Apply rotation to vertex
-                    Vector rotated = Mat4x4.MatMul(mesh.Polygons[i][j], rotMatrix);
+                    Vector rotated = Mat4x4.MatMul(mesh.Polygons[i].Vertices[j], rotMatrix);
 
                     // Translate vertex (slightly) to not draw on top of camera
-                    Vector translated = new Vector(rotated.X, rotated.Y, rotated.Z + 3.0f);
+                    Vector translated = new Vector(rotated.X, rotated.Y, rotated.Z + 1.2f);
 
-                    updatedTri[i][j] = translated;
-                }
+                    Mat4x4 mvp = ortho ? Mat4x4.MatMul(orthoProjection, camera.ViewMatrix) : Mat4x4.MatMul(perspProjection, camera.ViewMatrix);
 
-                float lightDP = Math.Max(0.1f, Vector.DotProduct(updatedTri[i].Normal, simpleLight.Direction));
-                ShadeTri(ref updatedTri[i], lightDP);
-            }
-
-            Triangle[] projected = new Triangle[mesh.Polygons.Length];
-
-            for (int i = 0; i < projected.Length; i++) {
-
-                projected[i] = updatedTri[i];
-
-                for (int j = 0; j < projected[i].VertexCount; j++) {
-
-                    projected[i][j] = Mat4x4.MatMul(projected[i][j], mvp);
+                    projected[i].Vertices[j] = Mat4x4.MatMul(translated, mvp);
 
                     // Scale Vectors
-                    projected[i][j] *= ortho ? 20.0f : projectionScale;  // Magic numbers :(
+                    projected[i].Vertices[j] *= projectionScale;
                 }
             }
 
             if (rotate) {
 
-                if (rotateX) xAngle -= 0.03f;
-                if (rotateY) yAngle -= 0.03f;
-                if (rotateZ) zAngle -= 0.03f;
+                if (rotateX) xAngle -= 0.01f;
+                if (rotateY) yAngle -= 0.01f;
+                if (rotateZ) zAngle -= 0.01f;
             }
 
-            if (isMesh) {
-
-                draw.PlotMesh(projected);
-
-            } else {
-
-                draw.PlotFaces(projected);
-            }
+            //draw.PlotShadedFaces(projected, simpleLight);
+            //draw.PlotFaces(projected);
+            draw.PlotMesh(projected);
         }
 
-        private void ShadeTri(ref Triangle tri, float dotProduct) {
-
-            //if (dotProduct < 0.0f) return ShadeChar.Null;
-
-            if (dotProduct <= 0.1f) {
-
-                tri.Color = ConsoleColor.DarkGray;
-                tri.Symbol = ShadeChar.Low;
-
-            } else if (dotProduct < 0.5f) {
-
-                tri.Color = ConsoleColor.Gray;
-                tri.Symbol = ShadeChar.Medium;
-
-            } else if (dotProduct < 0.7f) {
-
-                tri.Color = ConsoleColor.Gray;
-                tri.Symbol = ShadeChar.High;
-
-            } else {
-
-                tri.Color = ConsoleColor.White;
-                tri.Symbol = ShadeChar.Full;
-            }
-        }
-
-        
-
-        // Render 2nd (on top)
+        // Render 2nd
         private void RenderUI() {
 
-            string[] menu = new string[12];
+            string[] menu = new string[11];
 
             menu[0] = "■----------------------■";
             menu[1] = "|                      |";
             menu[2] = $"|      Ortho    [{(ortho ? 'X' : ' ')}]    |";
-            menu[3] = $"|      Mesh     [{(isMesh ? 'X' : ' ')}]    |";
-            menu[4] = $"|      Rotate   [{(rotate ? 'X' : ' ')}]    |";
-            menu[5] = $"|      Rotate X [{(rotateX ? 'X' : ' ')}]    |";
-            menu[6] = $"|      Rotate Y [{(rotateY ? 'X' : ' ')}]    |";
-            menu[7] = $"|      Rotate Z [{(rotateZ ? 'X' : ' ')}]    |";
-            menu[8] = "|      Reset           |";
-            menu[9] = "|      Back            |";
-            menu[10] = "|                      |";
-            menu[11] = "■----------------------■";
+            menu[3] = $"|      Rotate   [{(rotate ? 'X' : ' ')}]    |";
+            menu[4] = $"|      Rotate X [{(rotateX ? 'X' : ' ')}]    |";
+            menu[5] = $"|      Rotate Y [{(rotateY ? 'X' : ' ')}]    |";
+            menu[6] = $"|      Rotate Z [{(rotateZ ? 'X' : ' ')}]    |";
+            menu[7] = "|      Reset           |";
+            menu[8] = "|      Back            |";
+            menu[9] = "|                      |";
+            menu[10] = "■----------------------■";
 
             for (int i = 0; i < menu.Length; i++) {
 
@@ -273,11 +222,11 @@ namespace MatrixProjection {
             switch (Console.ReadKey(true).Key) {
 
                 case ConsoleKey.UpArrow:
-                    cursorY = cursorY > 2 ? cursorY - 1 : 9;
+                    cursorY = cursorY > 2 ? cursorY - 1 : 8;
                     break;
 
                 case ConsoleKey.DownArrow:
-                    cursorY = cursorY < 9 ? cursorY + 1 : 2;
+                    cursorY = cursorY < 8 ? cursorY + 1 : 2;
                     break;
 
                 case ConsoleKey.Enter:
@@ -285,43 +234,27 @@ namespace MatrixProjection {
                     break;
 
                 case ConsoleKey.W:
-                    camera.Position += camera.Forward * 0.05f;   // Forward -> Going towards +Z
+                    camera.Translate(new Vector(0, 0, 0.05f));    // Forward
                     break;
 
                 case ConsoleKey.A:
-                    camera.Position -= camera.Right * 0.05f;     // Left
+                    camera.Translate(new Vector(-0.05f, 0, 0));    // Left
                     break;
 
                 case ConsoleKey.S:
-                    camera.Position -= camera.Forward * 0.05f;   // Back
+                    camera.Translate(new Vector(0, 0, -0.05f));     // Back
                     break;
 
                 case ConsoleKey.D:
-                    camera.Position += camera.Right * 0.05f;     // Right
+                    camera.Translate(new Vector(0.05f, 0, 0));     // Right
                     break;
 
                 case ConsoleKey.E:
-                    camera.Position += camera.Up * 0.05f;        // Up
+                    camera.Translate(new Vector(0, 0.05f, 0));     // Up
                     break;
 
                 case ConsoleKey.Q:
-                    camera.Position -= camera.Up * 0.05f;        // Down
-                    break;
-
-                case ConsoleKey.NumPad4:
-                    camera.Yaw -= 2.0f;
-                    break;
-
-                case ConsoleKey.NumPad6:
-                    camera.Yaw += 2.0f;
-                    break;
-
-                case ConsoleKey.NumPad5:
-                    camera.Pitch -= 2.0f;
-                    break;
-
-                case ConsoleKey.NumPad8:
-                    camera.Pitch += 2.0f;
+                    camera.Translate(new Vector(0, -0.05f, 0));    // Down
                     break;
             }
 
@@ -337,33 +270,27 @@ namespace MatrixProjection {
                     break;
 
                 case 2:
-                    isMesh = !isMesh;
-                    break;
-
-                case 3:
                     rotate = !rotate;
                     break;
 
-                case 4:
+                case 3:
                     rotateX = !rotateX;
                     break;
 
-                case 5:
+                case 4:
                     rotateY = !rotateY;
                     break;
 
-                case 6:
+                case 5:
                     rotateZ = !rotateZ;
                     break;
 
-                case 7:
+                case 6:
                     xAngle = yAngle = zAngle = 0.0f; // Reset
-
-                    camera.Position = new Vector();
-                    camera.Yaw = camera.Pitch = camera.Roll = 0;
+                    rotate = true;
                     break;
 
-                case 8:
+                case 7:
                     loop = false;
                     input.Abort();
                     break;

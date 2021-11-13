@@ -1,4 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Diagnostics;
 
 namespace MatrixProjection {
 
@@ -7,9 +12,8 @@ namespace MatrixProjection {
         static void Main(string[] args) {
 
             // Adapted to Squared font (8x8 pixels)
-            // If ratio between pixel size changes, change 'ASPECT_RATIO' in 'Scene' class
-            //Menu menu = new Menu(120, 80); // Console Window starts at [30,25]
-            Menu menu = new Menu(Console.LargestWindowWidth, Console.LargestWindowHeight);
+            // If ratio between pixel size changes, change 'X_OFFSET' in 'DrawString' class
+            Menu menu = new Menu(120, 80);
             menu.ShowOptions();
         }
     }
