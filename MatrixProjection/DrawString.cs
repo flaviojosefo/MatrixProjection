@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace MatrixProjection {
 
     public class DrawString {
-
-        // Ratio between charaters' width and height (in pixels)
-        private const float X_OFFSET = 1.0f;
 
         private readonly int width, height;
 
@@ -16,7 +12,8 @@ namespace MatrixProjection {
 
         private readonly StringBuilder frame;
 
-        private ShadeChar currChar = ShadeChar.Full;
+        private ShadeChar currSymbol = ShadeChar.Full;
+        private ConsoleColor currColor = ConsoleColor.White;
 
         public DrawString() {
 
@@ -40,11 +37,13 @@ namespace MatrixProjection {
 
         public void PlotPoint(Vector v) { // '\u25A0' -> OLD BLOCK | '\u2588' -> Full Block | '\u2593' -> Dark Shade | '\u2592' -> Medium Shade | '\u2591' -> Light Shade
 
+            //Vector screenCoord = ConvertToScreen(v);
+
             if (!OutOfBounds(v)) {
 
                 int index = (int)v.X + (int)(-v.Y * width);
 
-                frame[index] = (char)currChar;
+                frame[index] = (char)currSymbol;
             }
         }
 
@@ -55,15 +54,18 @@ namespace MatrixProjection {
 
                 if (BackfaceCulled(projected[i])) continue;
 
+                currSymbol = ShadeChar.Full;
+                currColor = ConsoleColor.White;
+
                 for (int j = 0; j < projected[i].VertexCount; j++) {
 
-                    projected[i].Vertices[j] = ConvertToScreen(projected[i].Vertices[j]);
+                    projected[i][j] = ConvertToScreen(projected[i][j]);
                 }
 
                 for (int j = 0; j < projected[i].VertexCount; j++) {
 
                     // Fills every possible spot between two given points to form a line
-                    PlotLine(projected[i].Vertices[j], projected[i].Vertices[(j + 1) % projected[i].VertexCount]);
+                    PlotLine(projected[i][j], projected[i][(j + 1) % projected[i].VertexCount]);
                 }
             }
         }
@@ -77,8 +79,11 @@ namespace MatrixProjection {
 
                 for (int j = 0; j < projected[i].VertexCount; j++) {
 
-                    projected[i].Vertices[j] = ConvertToScreen(projected[i].Vertices[j]);
+                    projected[i][j] = ConvertToScreen(projected[i][j]);
                 }
+
+                currSymbol = projected[i].Symbol;
+                currColor = projected[i].Color;
 
                 bool flat = false;
                 float prevY = -1;
@@ -87,48 +92,39 @@ namespace MatrixProjection {
                 for (int j = 0; j < projected[i].VertexCount; j++) {
 
                     // Verify if triangle is flat
-                    if ((int)projected[i].Vertices[j].Y == (int)projected[i].Vertices[(j + 1) % projected[i].VertexCount].Y) {
+                    if ((int)projected[i][j].Y == (int)projected[i][(j + 1) % projected[i].VertexCount].Y) {
 
                         flat = true;
 
-                        if (prevY > projected[i].Vertices[j].Y) {
+                        if (prevY > projected[i][j].Y) {
 
-                            FillBottomFlatTriangle(sorted.Vertices[0], sorted.Vertices[1], sorted.Vertices[2]);
+                            FillBottomFlatTriangle(sorted[0], sorted[1], sorted[2]);
                             break;
 
                         } else {
 
-                            FillTopFlatTriangle(sorted.Vertices[0], sorted.Vertices[1], sorted.Vertices[2]);
+                            FillTopFlatTriangle(sorted[0], sorted[1], sorted[2]);
                             break;
                         }
 
                     } else {
 
-                        prevY = projected[i].Vertices[j].Y;
+                        prevY = projected[i][j].Y;
                     }
                 }
 
                 // if not, divide triangle into two flat, smaller triangles
                 if (!flat) {
 
-                    Vector v4 = new Vector(sorted.Vertices[0].X + (sorted.Vertices[1].Y - sorted.Vertices[0].Y) / 
-                                          (sorted.Vertices[2].Y - sorted.Vertices[0].Y) * 
-                                          (sorted.Vertices[2].X - sorted.Vertices[0].X), 
-                                           sorted.Vertices[1].Y);
+                    Vector v4 = new Vector(sorted[0].X + (sorted[1].Y - sorted[0].Y) / 
+                                          (sorted[2].Y - sorted[0].Y) * 
+                                          (sorted[2].X - sorted[0].X), 
+                                           sorted[1].Y);
 
-                    FillTopFlatTriangle(sorted.Vertices[0], sorted.Vertices[1], v4);
-                    FillBottomFlatTriangle(sorted.Vertices[1], v4, sorted.Vertices[2]);
+                    FillTopFlatTriangle(sorted[0], sorted[1], v4);
+                    FillBottomFlatTriangle(sorted[1], v4, sorted[2]);
                 }
             }
-        }
-
-        // Draws Solid with Shading - WIP
-        public void PlotShadedFaces(Triangle[] projected, Light light) {
-
-            //Vector lightDir = (light.Position - projected[i].Vertices[j]).Normalized;
-            //float intensity = Math.Max(0.0f, Vector.DotProduct(projected[i].Normal, lightDir));
-
-            //Shade(intensity);
         }
 
         private void FillTopFlatTriangle(Vector v1, Vector v2, Vector v3) {
@@ -160,30 +156,6 @@ namespace MatrixProjection {
                 PlotLine(new Vector(curx1, scanlineY), new Vector(curx2, scanlineY));
                 curx1 -= invslope1;
                 curx2 -= invslope2;
-            }
-        }
-
-        private void Shade(float lightIntensity) {
-
-            if (lightIntensity == 0.0f) {
-
-                currChar = ShadeChar.Null;
-
-            } else if (lightIntensity < 0.25f) {
-
-                currChar = ShadeChar.Low;
-
-            } else if (lightIntensity < 0.5f) {
-
-                currChar = ShadeChar.Medium;
-
-            } else if (lightIntensity < 0.75f) {
-
-                currChar = ShadeChar.High;
-
-            } else {
-
-                currChar = ShadeChar.Full;
             }
         }
 
@@ -225,7 +197,7 @@ namespace MatrixProjection {
         // Reversed 'Y' value is only used at the time of drawing and out of bounds verification
         private Vector ConvertToScreen(Vector v) {
 
-            return new Vector((int)((v.X * X_OFFSET) + (width / 2.0f)), (int)(v.Y - (height / 2.0f)));
+            return new Vector((int)(v.X + (width / 2.0f)), (int)(v.Y - (height / 2.0f)));
         }
 
         private bool BackfaceCulled(Triangle polygon) {
@@ -237,7 +209,8 @@ namespace MatrixProjection {
 
             for (int i = 0; i < polygon.VertexCount; i++) {
 
-                sum += (polygon.Vertices[i].X * polygon.Vertices[(i + 1) % polygon.VertexCount].Y) - (polygon.Vertices[i].Y * polygon.Vertices[(i + 1) % polygon.VertexCount].X);
+                sum += (polygon[i].X * polygon[(i + 1) % polygon.VertexCount].Y) - 
+                       (polygon[i].Y * polygon[(i + 1) % polygon.VertexCount].X);
             }
 
             return sum >= 0;
@@ -251,16 +224,16 @@ namespace MatrixProjection {
 
             for (int i = 1; i < polygonCopy.VertexCount; i++) {
 
-                Vector chosen = polygonCopy.Vertices[i];
+                Vector chosen = polygonCopy[i];
                 int j = i - 1;
 
-                while (j >= 0 && polygonCopy.Vertices[j].Y > chosen.Y) {
+                while (j >= 0 && polygonCopy[j].Y > chosen.Y) {
 
-                    polygonCopy.Vertices[j + 1] = polygonCopy.Vertices[j];
+                    polygonCopy[j + 1] = polygonCopy[j];
                     j--;
                 }
 
-                polygonCopy.Vertices[j + 1] = chosen;
+                polygonCopy[j + 1] = chosen;
             }
 
             return polygonCopy;
