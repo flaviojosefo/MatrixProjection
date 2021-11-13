@@ -8,16 +8,19 @@ namespace MatrixProjection {
 
     public struct Triangle {
 
-        public Vector[] Vertices { get; }
+        private readonly Vector[] vertices;
 
-        public int VertexCount { get => Vertices.Length; }
+        public int VertexCount { get => vertices.Length; }
+
+        public ShadeChar Symbol { get; set; } // Flat Shading
+        public ConsoleColor Color { get; set; }
 
         public Vector Normal {
 
             get {
 
-                Vector u = Vertices[1] - Vertices[0];
-                Vector v = Vertices[2] - Vertices[0];
+                Vector u = vertices[1] - vertices[0];
+                Vector v = vertices[2] - vertices[0];
 
                 return -Vector.CrossProduct(u, v).Normalized;
             }
@@ -27,16 +30,24 @@ namespace MatrixProjection {
 
             Array.Resize(ref vertices, 3);
 
-            Vertices = vertices;
+            this.vertices = vertices;
+
+            Symbol = ShadeChar.Full;
+            Color = ConsoleColor.White;
         }
 
         public Triangle(Vector v1, Vector v2, Vector v3) {
 
-            Vertices = new Vector[3];
+            vertices = new Vector[3];
 
-            Vertices[0] = v1;
-            Vertices[1] = v2;
-            Vertices[2] = v3;
+            vertices[0] = v1;
+            vertices[1] = v2;
+            vertices[2] = v3;
+
+            Symbol = ShadeChar.Full;
+            Color = ConsoleColor.White;
         }
+
+        public Vector this[int i] { get => vertices[i]; set => vertices[i] = value; }
     }
 }
