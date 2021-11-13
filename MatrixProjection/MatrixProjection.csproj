@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
+    <Compile Include="ConsoleData.cs" />
     <Compile Include="Cube.cs" />
     <Compile Include="Draw.cs" />
     <Compile Include="DrawString.cs" />
