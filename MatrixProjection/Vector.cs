@@ -12,7 +12,7 @@ namespace MatrixProjection {
 
         public Vector Normalized => this / Magnitude;
 
-        public Vector (float x, float y, float z = 0) {
+        public Vector(float x, float y, float z = 0) {
 
             X = x;
             Y = y;
@@ -33,7 +33,13 @@ namespace MatrixProjection {
 
             return new Vector(v1.X - v2.X, v1.Y - v2.Y, v1.Z - v2.Z);
         }
+
         public static Vector operator *(Vector v, float scalar) {
+
+            return new Vector(v.X * scalar, v.Y * scalar, v.Z * scalar);
+        }
+
+        public static Vector operator *(float scalar, Vector v) {
 
             return new Vector(v.X * scalar, v.Y * scalar, v.Z * scalar);
         }
@@ -70,10 +76,19 @@ namespace MatrixProjection {
             return (v2 - v1).Magnitude;
         }
 
+        public static Vector PlaneIntersection(Vector planePoint, Vector planeNormal, Vector lineStart, Vector lineEnd) {
+
+            // Add math here
+
+            return new Vector();
+        }
+
         private float GetMagnitude() {
 
             return (float)Math.Sqrt((X * X) + (Y * Y) + (Z * Z));
         }
+
+        public void Normalize() { this = Normalized; }
 
         public override string ToString() {
 
