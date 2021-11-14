@@ -6,6 +6,7 @@
         Low = '\u2591',
         Medium = '\u2592',
         High = '\u2593',
-        Full = '\u2588'
+        Full = '\u2588',
+        Special = '\u25A0'
     }
 }

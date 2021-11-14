@@ -31,7 +31,8 @@ namespace MatrixProjection {
 
         private bool ortho;
 
-        private bool isMesh;
+        private bool hasMesh= false;
+        private bool hasSurface = true;
 
         private bool loop = true;
 
@@ -189,13 +190,26 @@ namespace MatrixProjection {
                 if (rotateZ) zAngle -= 0.03f;
             }
 
-            if (isMesh) {
+            if (hasMesh && hasSurface) {
+
+                // Plot Faces and Mesh
+
+                // After testing with modified versions of the methods below
+                // it's safe to assume this needs its own method
+
+                // If implementation becomes unnecessary, remove this
+
+            } else if (hasSurface) {
+
+                draw.PlotFaces(projected);
+
+            } else if (hasMesh) {
 
                 draw.PlotMesh(projected);
 
             } else {
 
-                draw.PlotFaces(projected);
+                draw.PlotVertices(projected);
             }
         }
 
@@ -230,20 +244,21 @@ namespace MatrixProjection {
         // Render 2nd (on top)
         private void RenderUI() {
 
-            string[] menu = new string[12];
+            string[] menu = new string[13];
 
             menu[0] = "■----------------------■";
             menu[1] = "|                      |";
             menu[2] = $"|      Ortho    [{(ortho ? 'X' : ' ')}]    |";
-            menu[3] = $"|      Mesh     [{(isMesh ? 'X' : ' ')}]    |";
-            menu[4] = $"|      Rotate   [{(rotate ? 'X' : ' ')}]    |";
-            menu[5] = $"|      Rotate X [{(rotateX ? 'X' : ' ')}]    |";
-            menu[6] = $"|      Rotate Y [{(rotateY ? 'X' : ' ')}]    |";
-            menu[7] = $"|      Rotate Z [{(rotateZ ? 'X' : ' ')}]    |";
-            menu[8] = "|      Reset           |";
-            menu[9] = "|      Back            |";
-            menu[10] = "|                      |";
-            menu[11] = "■----------------------■";
+            menu[3] = $"|      Mesh     [{(hasMesh ? 'X' : ' ')}]    |";
+            menu[4] = $"|      Surface  [{(hasSurface ? 'X' : ' ')}]    |";
+            menu[5] = $"|      Rotate   [{(rotate ? 'X' : ' ')}]    |";
+            menu[6] = $"|      Rotate X [{(rotateX ? 'X' : ' ')}]    |";
+            menu[7] = $"|      Rotate Y [{(rotateY ? 'X' : ' ')}]    |";
+            menu[8] = $"|      Rotate Z [{(rotateZ ? 'X' : ' ')}]    |";
+            menu[9] = "|      Reset           |";
+            menu[10] = "|      Back            |";
+            menu[11] = "|                      |";
+            menu[12] = "■----------------------■";
 
             for (int i = 0; i < menu.Length; i++) {
 
@@ -273,11 +288,11 @@ namespace MatrixProjection {
             switch (Console.ReadKey(true).Key) {
 
                 case ConsoleKey.UpArrow:
-                    cursorY = cursorY > 2 ? cursorY - 1 : 9;
+                    cursorY = cursorY > 2 ? cursorY - 1 : 10;
                     break;
 
                 case ConsoleKey.DownArrow:
-                    cursorY = cursorY < 9 ? cursorY + 1 : 2;
+                    cursorY = cursorY < 10 ? cursorY + 1 : 2;
                     break;
 
                 case ConsoleKey.Enter:
@@ -337,33 +352,37 @@ namespace MatrixProjection {
                     break;
 
                 case 2:
-                    isMesh = !isMesh;
+                    hasMesh = !hasMesh;
                     break;
 
                 case 3:
-                    rotate = !rotate;
+                    hasSurface = !hasSurface;
                     break;
 
                 case 4:
-                    rotateX = !rotateX;
+                    rotate = !rotate;
                     break;
 
                 case 5:
-                    rotateY = !rotateY;
+                    rotateX = !rotateX;
                     break;
 
                 case 6:
-                    rotateZ = !rotateZ;
+                    rotateY = !rotateY;
                     break;
 
                 case 7:
+                    rotateZ = !rotateZ;
+                    break;
+
+                case 8:
                     xAngle = yAngle = zAngle = 0.0f; // Reset
 
                     camera.Position = new Vector();
                     camera.Yaw = camera.Pitch = camera.Roll = 0;
                     break;
 
-                case 8:
+                case 9:
                     loop = false;
                     input.Abort();
                     break;

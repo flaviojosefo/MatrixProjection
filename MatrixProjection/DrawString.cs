@@ -47,6 +47,23 @@ namespace MatrixProjection {
             }
         }
 
+        // Draws Vertices only
+        public void PlotVertices(Triangle[] projected) {
+
+            currSymbol = ShadeChar.Full;
+            currColor = ConsoleColor.White;
+
+            for (int i = 0; i < projected.Length; i++) {
+
+                for (int j = 0; j < projected[i].VertexCount; j++) {
+
+                    projected[i][j] = ConvertToScreen(projected[i][j]);
+
+                    PlotPoint(projected[i][j]);
+                }
+            }
+        }
+
         // Draws Mesh
         public void PlotMesh(Triangle[] projected) {
 

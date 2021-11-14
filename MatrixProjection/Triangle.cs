@@ -9,6 +9,7 @@ namespace MatrixProjection {
     public struct Triangle {
 
         private readonly Vector[] vertices;
+        public Vector[] Vertices => vertices;
 
         public int VertexCount { get => vertices.Length; }
 
