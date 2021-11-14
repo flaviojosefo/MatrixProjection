@@ -3,22 +3,74 @@ using System.Collections.Generic;
 
 namespace MatrixProjection {
 
-    public class Engram : Shape {
+    public class Engram : Mesh {
 
-        private (int vertex1, int vertex2)[] connections;
+        public override Triangle[] Polygons { get; protected set; } = new Triangle[36];
 
-        public Engram() {
+        // Had to do it manually since the dodecahedron is created with arbitrary vectors
+        public Engram(float radius = 0.8f) {
 
-            Vertices = MakeDodecahedron(0.5f);
-            GetConnections();
-        }
+            Vector[] verts = MakeDodecahedron(radius);
 
-        public override void DrawShape(DrawString draw, Vector[] projected) {
+            // Pentagon 1
+            CreateTri(verts[0], verts[1], verts[3]);
+            CreateTri(verts[0], verts[4], verts[1]);
+            CreateTri(verts[0], verts[5], verts[4]);
 
-            for (int i = 0; i < connections.Length; i++) {
+            // Pentagon 2
+            CreateTri(verts[0], verts[13], verts[11]);
+            CreateTri(verts[0], verts[11], verts[14]);
+            CreateTri(verts[0], verts[14], verts[5]);
 
-                //draw.AddLine(projected[connections[i].vertex1], projected[connections[i].vertex2]);
-            }
+            // Pentagon 3
+            CreateTri(verts[0], verts[3], verts[2]);
+            CreateTri(verts[0], verts[2], verts[12]);
+            CreateTri(verts[0], verts[12], verts[13]);
+
+            // Pentagon 4
+            CreateTri(verts[5], verts[14], verts[17]);
+            CreateTri(verts[5], verts[17], verts[7]);
+            CreateTri(verts[5], verts[7], verts[4]);
+
+            // Pentagon 5
+            CreateTri(verts[3], verts[1], verts[6]);
+            CreateTri(verts[3], verts[6], verts[8]);
+            CreateTri(verts[3], verts[8], verts[2]);
+
+            // Pentagon 6
+            CreateTri(verts[13], verts[12], verts[18]);
+            CreateTri(verts[13], verts[18], verts[16]);
+            CreateTri(verts[13], verts[16], verts[11]);
+
+            // Pentagon 7
+            CreateTri(verts[2], verts[8], verts[10]);
+            CreateTri(verts[2], verts[10], verts[18]);
+            CreateTri(verts[2], verts[18], verts[12]);
+
+            // Pentagon 8
+            CreateTri(verts[1], verts[4], verts[7]);
+            CreateTri(verts[1], verts[7], verts[9]);
+            CreateTri(verts[1], verts[9], verts[6]);
+
+            // Pentagon 9
+            CreateTri(verts[11], verts[16], verts[19]);
+            CreateTri(verts[11], verts[19], verts[17]);
+            CreateTri(verts[11], verts[17], verts[14]);
+
+            // Pentagon 10
+            CreateTri(verts[6], verts[9], verts[15]);
+            CreateTri(verts[6], verts[15], verts[10]);
+            CreateTri(verts[6], verts[10], verts[8]);
+
+            // Pentagon 11
+            CreateTri(verts[16], verts[18], verts[10]);
+            CreateTri(verts[16], verts[10], verts[15]);
+            CreateTri(verts[16], verts[15], verts[19]);
+
+            // Pentagon 12
+            CreateTri(verts[17], verts[19], verts[15]);
+            CreateTri(verts[17], verts[15], verts[9]);
+            CreateTri(verts[17], verts[9], verts[7]);
         }
 
         /// <summary>
@@ -66,55 +118,6 @@ namespace MatrixProjection {
             }
 
             return vertices.ToArray();
-        }
-
-        private void GetConnections() {
-
-            connections = new (int, int)[30];
-
-            float bestDistance = (float)Math.Round(GetBestDistance(), 3);
-
-            for (int i = 0; i < Vertices.Length; i++) {
-
-                for (int j = 0; j < Vertices.Length; j++) {
-
-                    float currentDistance = (float)Math.Round(Vector.Distance(Vertices[i], Vertices[j]), 3);
-
-                    if (currentDistance == bestDistance) {
-
-                        for (int k = 0; k < connections.Length; k++) {
-
-                            if ((i == connections[k].vertex1 && j == connections[k].vertex2) ||
-                                (j == connections[k].vertex1 && i == connections[k].vertex2)) {
-
-                                break;
-
-                            } else if (connections[k] == default) {
-
-                                connections[k] = (i, j);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private float GetBestDistance() {
-
-            float bestDistance = float.MaxValue;
-
-            for (int i = 1; i < Vertices.Length; i++) {
-
-                float currentDistance = Vector.Distance(Vertices[0], Vertices[i]);
-
-                if (currentDistance < bestDistance) {
-
-                    bestDistance = currentDistance;
-                }
-            }
-
-            return bestDistance;
         }
     }
 }
