@@ -14,11 +14,8 @@ namespace MatrixProjection {
 
         public Menu(int width, int height) {
 
-            Console.WindowWidth = width;
-            Console.WindowHeight = height;
-
-            Console.BufferWidth = width;
-            Console.BufferHeight = height;
+            Console.SetWindowSize(width, height);
+            Console.SetBufferSize(width, height);
 
             Console.CursorVisible = false;
 
