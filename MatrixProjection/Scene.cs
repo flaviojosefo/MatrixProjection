@@ -10,7 +10,7 @@ namespace MatrixProjection {
     public class Scene {
 
         // Width / Height (Pixel ratio)
-        private const float ASPECT_RATIO = 8 / 6.0f;
+        private const float ASPECT_RATIO = (8 * 243) / (float)(16 * 63);
 
         private Camera camera;
         private DrawString draw;
