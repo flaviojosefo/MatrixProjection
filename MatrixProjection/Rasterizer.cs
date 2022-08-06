@@ -1,52 +1,115 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MatrixProjection {
 
-    // DEPRECATED (but has useful math)
+    public class Rasterizer : IRenderer {
 
-    public class DrawString {
+        public RenderMode RenderMode { get; set; } = RenderMode.Solid;
+        public List<Fragment> Fragments { get; } = new List<Fragment>();
+
+        private readonly Camera camera;
+        private readonly Light light;
 
         private readonly int width, height;
 
-        private readonly int totalPixels;
-
-        private readonly StringBuilder frame;
-
+        // '\u25A0' -> OLD BLOCK | '\u2588' -> Full Block | '\u2593' -> Dark Shade | '\u2592' -> Medium Shade | '\u2591' -> Light Shade
         private ShadeChar currSymbol = ShadeChar.Full;
         private ConsoleColor currColor = ConsoleColor.White;
 
-        public DrawString() {
+        public Rasterizer(Camera camera, Light light) {
+
+            this.camera = camera;
+            this.light = light;
 
             width = Console.WindowWidth;
             height = Console.WindowHeight - 1;
-
-            totalPixels = width * height;
-
-            frame = new StringBuilder(totalPixels);
         }
 
-        public void NewFrame() {
+        public void Render(RenderObject renderObject) {
 
-            frame.Clear();
+            Fragments.Clear();
 
-            for (int i = 0; i < totalPixels; i++) {
+            Mat4x4 vp = Mat4x4.MatMul(camera.ProjMatrix, camera.ViewMatrix);
 
-                frame.Append(' ');
+            Triangle[] worldTri = new Triangle[renderObject.Mesh.Polygons.Length];
+
+            for (int i = 0; i < renderObject.Mesh.Polygons.Length; i++) {
+
+                worldTri[i] = new Triangle(new Vector[renderObject.Mesh.Polygons[i].VertexCount]);
+
+                for (int j = 0; j < renderObject.Mesh.Polygons[i].VertexCount; j++) {
+
+                    // Object to World space (Local to World coords)
+                    Vector worldV = Mat4x4.MatMul(renderObject.Mesh.Polygons[i][j], renderObject.ModelMatrix);
+
+                    worldTri[i][j] = worldV;
+                }
+
+                float lightDP = Vector.DotProduct(worldTri[i].Normal, light.Direction);
+                ShadeTri(ref worldTri[i], lightDP);
+            }
+
+            Triangle[] projected = new Triangle[renderObject.Mesh.Polygons.Length];
+
+            for (int i = 0; i < projected.Length; i++) {
+
+                projected[i] = worldTri[i];
+
+                for (int j = 0; j < projected[i].VertexCount; j++) {
+
+                    projected[i][j] = Mat4x4.MatMul(projected[i][j], vp);
+
+                    // Scale Vectors
+                    projected[i][j] *= camera.IsOrthographic() ? 20.0f : 100.0f;  // Magic numbers :(
+                }
+            }
+
+            switch (RenderMode) {
+
+                case RenderMode.Vertices:
+                    PlotVertices(projected);
+                    break;
+
+                case RenderMode.Mesh:
+                    PlotMesh(projected);
+                    break;
+
+                case RenderMode.Solid:
+                    PlotFaces(projected);
+                    break;
             }
         }
 
-        public void PlotPoint(Vector v) { // '\u25A0' -> OLD BLOCK | '\u2588' -> Full Block | '\u2593' -> Dark Shade | '\u2592' -> Medium Shade | '\u2591' -> Light Shade
+        private void ShadeTri(ref Triangle tri, float dotProduct) {
 
-            //Vector screenCoord = ConvertToScreen(v);
+            //if (dotProduct < 0.0f) return ShadeChar.Null;
 
-            if (!OutOfBounds(v)) {
+            if (dotProduct <= 0.1f) {
 
-                int index = (int)v.X + (int)(-v.Y * width);
+                tri.Color = ConsoleColor.DarkGray;
+                tri.Symbol = ShadeChar.Low;
 
-                frame[index] = (char)currSymbol;
+            } else if (dotProduct < 0.5f) {
+
+                tri.Color = ConsoleColor.Gray;
+                tri.Symbol = ShadeChar.Medium;
+
+            } else if (dotProduct < 0.7f) {
+
+                tri.Color = ConsoleColor.Gray;
+                tri.Symbol = ShadeChar.High;
+
+            } else {
+
+                tri.Color = ConsoleColor.White;
+                tri.Symbol = ShadeChar.Full;
             }
+        }
+
+        public void PlotPoint(Vector v) {
+
+            Fragments.Add(new Fragment(v, currSymbol, currColor));
         }
 
         // Draws Vertices only
@@ -178,40 +241,6 @@ namespace MatrixProjection {
             }
         }
 
-        public void DrawFrame() {
-
-            Console.SetCursorPosition(0, 0);
-            Console.Write(frame);
-        }
-
-        private bool OutOfBounds(Vector v) {
-
-            if (v.X >= width || v.X < 0 ||
-               -v.Y >= height || -v.Y < 0) {
-
-                return true;
-            }
-
-            return false;
-        }
-
-        public void AddText(Vector windowCoord, string text) {
-
-            int index = (int)(windowCoord.X + (windowCoord.Y * width));
-
-            for (int i = 0; i < text.Length; i++) {
-
-                frame[index + i] = text[i];
-            }
-        }
-
-        public void AddText(Vector windowCoord, char character) {
-
-            int index = (int)(windowCoord.X + (windowCoord.Y * width));
-
-            frame[index] = character;
-        }
-
         // Does not reverse 'Y' value (actual console Y)
         // Reversed 'Y' value is only used at the time of drawing and out of bounds verification
         private Vector ConvertToScreen(Vector v) {
@@ -338,7 +367,7 @@ namespace MatrixProjection {
             int D = (2 * dx) - dy;
             int x = (int)from.X;
 
-            for (int i = (int)from.Y; i <= (int)to.Y; i++) {
+            for (int i = (int)from.Y; i < (int)to.Y; i++) {
 
                 PlotPoint(new Vector(x, i));
 
