@@ -90,7 +90,7 @@ namespace MatrixProjection {
             Vector up = new Vector(0, 1, 0);
             Vector target = new Vector(0, 0, -1);
 
-            Vector lookDir = Mat4x4.MatMul(target, camRot);
+            Vector lookDir = Mat4x4.MatMul(camRot, target);
             target = Position + lookDir;
 
             return LookAt(Position, target, up);

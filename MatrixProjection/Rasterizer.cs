@@ -58,7 +58,9 @@ namespace MatrixProjection {
 
                 for (int j = 0; j < projected[i].VertexCount; j++) {
 
-                    projected[i][j] = Mat4x4.MatMul(projected[i][j], vp);
+                    Vector4 v4 = Mat4x4.MatMul((Vector4)projected[i][j], vp);
+
+                    projected[i][j] = (Vector)v4 / v4.W;  // Perspective Division
 
                     // Scale Vectors
                     projected[i][j] *= camera.IsOrthographic() ? 20.0f : 100.0f;  // Magic numbers :(

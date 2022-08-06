@@ -19,8 +19,6 @@ namespace MatrixProjection {
 
         private readonly RenderObject rObject;
 
-        private readonly float projectionScale;
-
         private int cursorY = 2;
 
         private Thread input;
@@ -35,13 +33,11 @@ namespace MatrixProjection {
 
         //Stopwatch timer = new Stopwatch();
 
-        public Scene(int frameRate, RenderObject rObject, float projectionScale = 100.0f) {
+        public Scene(int frameRate, RenderObject rObject) {
 
             deltaTime = 1000 / frameRate;
 
             this.rObject = rObject;
-
-            this.projectionScale = projectionScale;
         }
 
         public void Start() {

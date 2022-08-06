@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MatrixProjection {
+﻿namespace MatrixProjection {
 
     public struct Vector4 {
 
@@ -21,8 +15,8 @@ namespace MatrixProjection {
             W = w;
         }
 
-        // W acts as a scalar
-        public static explicit operator Vector(Vector4 v) => new Vector(v.X, v.Y, v.Z) / v.W;
+        // W gets dropped
+        public static explicit operator Vector(Vector4 v) => new Vector(v.X, v.Y, v.Z);
 
         public static explicit operator Vector4(Vector v) => new Vector4(v.X, v.Y, v.Z);
     }

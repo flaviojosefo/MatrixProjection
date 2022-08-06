@@ -52,14 +52,8 @@ namespace MatrixProjection {
                                m[0, 3]);
         }
 
-        // Row-major order multiplication
-        public static Vector MatMul(Vector v, Mat4x4 m) {
-
-            return MatMul((Vector4)v, m);
-        }
-
-        // Row-major order multiplication
-        public static Vector MatMul(Vector4 v, Mat4x4 m) {
+        // For vectors that store the 'W' component
+        public static Vector4 MatMul(Vector4 v, Mat4x4 m) {
 
             Vector4 multVector = new Vector4(
                 v.X * m[0, 0] + v.Y * m[0, 1] + v.Z * m[0, 2] + v.W * m[0, 3],
@@ -67,10 +61,31 @@ namespace MatrixProjection {
                 v.X * m[2, 0] + v.Y * m[2, 1] + v.Z * m[2, 2] + v.W * m[2, 3],
                 v.X * m[3, 0] + v.Y * m[3, 1] + v.Z * m[3, 2] + v.W * m[3, 3]);
 
-            return (Vector)multVector;
+            return multVector;
         }
 
-        // Row-major order multiplication
+        // For vectors that represent 'positions'
+        public static Vector MatMul(Vector v, Mat4x4 m) {
+
+            Vector multVector = new Vector(
+                v.X * m[0, 0] + v.Y * m[0, 1] + v.Z * m[0, 2] + m[0, 3],
+                v.X * m[1, 0] + v.Y * m[1, 1] + v.Z * m[1, 2] + m[1, 3],
+                v.X * m[2, 0] + v.Y * m[2, 1] + v.Z * m[2, 2] + m[2, 3]);
+
+            return multVector;
+        }
+
+        // For vectors that respresent 'directions'
+        public static Vector MatMul(Mat4x4 m, Vector v) {
+
+            Vector multVector = new Vector(
+                v.X * m[0, 0] + v.Y * m[0, 1] + v.Z * m[0, 2],
+                v.X * m[1, 0] + v.Y * m[1, 1] + v.Z * m[1, 2],
+                v.X * m[2, 0] + v.Y * m[2, 1] + v.Z * m[2, 2]);
+
+            return multVector;
+        }
+
         public static Mat4x4 MatMul(Mat4x4 m1, Mat4x4 m2) {
 
             float[,] newMatrix = new float[m1.GetLength(0), m2.GetLength(1)];
