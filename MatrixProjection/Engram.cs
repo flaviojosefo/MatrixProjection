@@ -8,7 +8,9 @@ namespace MatrixProjection {
         public override Triangle[] Polygons { get; protected set; } = new Triangle[36];
 
         // Had to do it manually since the dodecahedron is created with arbitrary vectors
-        public Engram(float radius = 0.8f) {
+        public Engram() {
+
+            float radius = 0.8f;
 
             Vector[] verts = MakeDodecahedron(radius);
 

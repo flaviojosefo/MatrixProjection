@@ -10,9 +10,11 @@ namespace MatrixProjection {
 
         public override Triangle[] Polygons { get; protected set; } = new Triangle[12];
 
-        public Cube(float size = 1, bool tris = true) {
+        public Cube() {
 
-            if (tris) {
+            float size = 1.0f;
+
+            if (true) {
 
                 // Front
                 CreateTri(new Vector(-size * 0.5f, -size * 0.5f, -size * 0.5f),
