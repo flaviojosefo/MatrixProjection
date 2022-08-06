@@ -3,6 +3,7 @@
 namespace MatrixProjection {
 
     // DEPRECATED (but has useful math)
+
     public struct Matrix3D {
 
         public float[,] Matrix { get; set; }
