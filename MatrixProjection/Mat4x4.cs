@@ -29,22 +29,14 @@ namespace MatrixProjection {
 
         public static Mat4x4 Vec4ToMat(Vector4 v) {
 
-            return new float[4, 1] {
-                {v.X},
-                {v.Y},
-                {v.Z},
-                {v.W}
+            return new float[1, 4] {
+                {v.X,v.Y,v.Z,v.W}
             };
         }
 
         public static Mat4x4 VecToMat(Vector v) {
 
             return Vec4ToMat((Vector4)v);
-        }
-
-        public static Mat4x4 VecToMat(Vector4 v) {
-
-            return Vec4ToMat(v);
         }
 
         public static Vector MatToVec(Mat4x4 m) {
@@ -55,9 +47,9 @@ namespace MatrixProjection {
         public static Vector4 MatToVec4(Mat4x4 m) {
 
             return new Vector4(m[0, 0],
-                               m[1, 0],
-                               m[2, 0],
-                               m[3, 0]);
+                               m[0, 1],
+                               m[0, 2],
+                               m[0, 3]);
         }
 
         // Row-major order multiplication
@@ -99,6 +91,21 @@ namespace MatrixProjection {
             }
 
             return newMatrix;
+        }
+
+        public static Mat4x4 Transpose(Mat4x4 m) {
+
+            float[,] transposed = new float[m.GetLength(0), m.GetLength(1)];
+
+            for (int i = 0; i < m.GetLength(0); i++) {
+
+                for (int j = 0; j < m.GetLength(1); j++) {
+
+                    transposed[i, j] = m[j, i];
+                }
+            }
+
+            return transposed;
         }
 
         private Mat4x4 GetInverse() {
