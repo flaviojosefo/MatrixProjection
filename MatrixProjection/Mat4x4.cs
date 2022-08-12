@@ -67,9 +67,7 @@ namespace MatrixProjection {
         // For vectors that represent 'positions'
         public static Vector MatMul(Vector v, Mat4x4 m) {
 
-            Vector4 multVector = MatMul((Vector4)v, m);
-
-            return (Vector)multVector / multVector.W;
+            return (Vector)MatMul((Vector4)v, m);
         }
 
         // For vectors that respresent 'directions'

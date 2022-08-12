@@ -26,59 +26,53 @@ namespace MatrixProjection {
             height = Console.WindowHeight - 1;
         }
 
-        public void Render(RenderObject renderObject) {
+        public void Render(RenderObject rObject) {
 
             Fragments.Clear();
 
-            Triangle[] worldTri = new Triangle[renderObject.Mesh.Polygons.Length];
+            Triangle[] updatedTri = new Triangle[rObject.Mesh.Polygons.Length];
 
-            for (int i = 0; i < renderObject.Mesh.Polygons.Length; i++) {
+            for (int i = 0; i < rObject.Mesh.Polygons.Length; i++) {
 
-                worldTri[i] = new Triangle(new Vector[renderObject.Mesh.Polygons[i].VertexCount]);
+                updatedTri[i] = new Triangle(new Vector[rObject.Mesh.Polygons[i].VertexCount]);
 
-                for (int j = 0; j < renderObject.Mesh.Polygons[i].VertexCount; j++) {
+                for (int j = 0; j < rObject.Mesh.Polygons[i].VertexCount; j++) {
 
                     // Object to World space (Local to World coords)
-                    Vector worldV = Mat4x4.MatMul(renderObject.Mesh.Polygons[i][j], renderObject.ModelMatrix);
-
-                    worldTri[i][j] = worldV;
+                    updatedTri[i][j] = Mat4x4.MatMul(rObject.Mesh.Polygons[i][j], rObject.ModelMatrix);
                 }
 
-                float lightDP = Vector.DotProduct(worldTri[i].Normal, light.Direction);
-                ShadeTri(ref worldTri[i], lightDP);
-            }
+                float lightDP = Vector.DotProduct(updatedTri[i].Normal, light.Direction);
+                ShadeTri(ref updatedTri[i], lightDP);
 
-            Triangle[] projected = new Triangle[renderObject.Mesh.Polygons.Length];
-
-            for (int i = 0; i < projected.Length; i++) {
-
-                projected[i] = worldTri[i];
-
-                for (int j = 0; j < projected[i].VertexCount; j++) {
+                for (int j = 0; j < updatedTri[i].VertexCount; j++) {
 
                     // World to View
-                    projected[i][j] = Mat4x4.MatMul(projected[i][j], camera.ViewMatrix);
+                    Vector4 tri4 = Mat4x4.MatMul((Vector4)updatedTri[i][j], camera.ViewMatrix);
 
                     // View to Projection
-                    projected[i][j] = Mat4x4.MatMul(projected[i][j], camera.ProjMatrix);
+                    tri4 = Mat4x4.MatMul(tri4, camera.ProjMatrix);
+
+                    // Perspective Division
+                    updatedTri[i][j] = camera.IsOrthographic() ? (Vector)tri4 : (Vector)tri4 / tri4.W;
 
                     // Scale Vectors
-                    projected[i][j] *= camera.IsOrthographic() ? 10.0f : 40.0f;  // Magic numbers >:(
+                    updatedTri[i][j] *= camera.IsOrthographic() ? 10.0f : 40.0f;  // Magic numbers >:(
                 }
             }
 
             switch (RenderMode) {
 
                 case RenderMode.Vertices:
-                    PlotVertices(projected);
+                    PlotVertices(updatedTri);
                     break;
 
                 case RenderMode.Mesh:
-                    PlotMesh(projected);
+                    PlotMesh(updatedTri);
                     break;
 
                 case RenderMode.Solid:
-                    PlotFaces(projected);
+                    PlotFaces(updatedTri);
                     break;
             }
         }
