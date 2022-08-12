@@ -34,14 +34,14 @@ namespace MatrixProjection {
             };
         }
 
-        public static Mat4x4 VecToMat(Vector v) {
+        public static Mat4x4 VecToMat(Vector3 v) {
 
             return Vec4ToMat((Vector4)v);
         }
 
-        public static Vector MatToVec(Mat4x4 m) {
+        public static Vector3 MatToVec(Mat4x4 m) {
 
-            return (Vector)MatToVec4(m);
+            return (Vector3)MatToVec4(m);
         }
 
         public static Vector4 MatToVec4(Mat4x4 m) {
@@ -65,15 +65,15 @@ namespace MatrixProjection {
         }
 
         // For vectors that represent 'positions'
-        public static Vector MatMul(Vector v, Mat4x4 m) {
+        public static Vector3 MatMul(Vector3 v, Mat4x4 m) {
 
-            return (Vector)MatMul((Vector4)v, m);
+            return (Vector3)MatMul((Vector4)v, m);
         }
 
         // For vectors that respresent 'directions'
-        public static Vector MatMul(Mat4x4 m, Vector v) {
+        public static Vector3 MatMul(Mat4x4 m, Vector3 v) {
 
-            Vector multVector = new Vector(
+            Vector3 multVector = new Vector3(
                 v.X * m[0, 0] + v.Y * m[0, 1] + v.Z * m[0, 2],
                 v.X * m[1, 0] + v.Y * m[1, 1] + v.Z * m[1, 2],
                 v.X * m[2, 0] + v.Y * m[2, 1] + v.Z * m[2, 2]);

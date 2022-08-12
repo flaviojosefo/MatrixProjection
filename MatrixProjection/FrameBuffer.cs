@@ -38,7 +38,7 @@ namespace MatrixProjection {
             Console.Write(buffer);
         }
 
-        public void AddText(Vector windowCoord, string text) {
+        public void AddText(Vector3 windowCoord, string text) {
 
             int index = (int)(windowCoord.X + (windowCoord.Y * width));
 
@@ -48,7 +48,7 @@ namespace MatrixProjection {
             }
         }
 
-        public void AddText(Vector windowCoord, char character) {
+        public void AddText(Vector3 windowCoord, char character) {
 
             int index = (int)(windowCoord.X + (windowCoord.Y * width));
 
@@ -71,7 +71,7 @@ namespace MatrixProjection {
         }
 
         // When clipping is implemented this SHOULD be discarded
-        private bool OutOfBounds(Vector screenV) {
+        private bool OutOfBounds(Vector3 screenV) {
 
             if (screenV.X >= width || screenV.X < 0 ||
                -screenV.Y >= height || -screenV.Y < 0) {

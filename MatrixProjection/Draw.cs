@@ -16,7 +16,7 @@ namespace MatrixProjection {
             consoleY = Console.WindowHeight;
         }
 
-        public void DrawPoint(Vector v, bool render = true, char symbol = '■') {
+        public void DrawPoint(Vector3 v, bool render = true, char symbol = '■') {
 
             if (!OutOfBounds(v)) {
 
@@ -25,11 +25,11 @@ namespace MatrixProjection {
             }
         }
 
-        public void DrawLine(Vector from, Vector to, bool render = true) {
+        public void DrawLine(Vector3 from, Vector3 to, bool render = true) {
 
             int step = 10;
 
-            Vector line = (to - from) / step;
+            Vector3 line = (to - from) / step;
 
             DrawPoint(from, render);
 
@@ -41,7 +41,7 @@ namespace MatrixProjection {
             DrawPoint(from += line, render);
         }
 
-        private bool OutOfBounds(Vector v) {
+        private bool OutOfBounds(Vector3 v) {
 
             if ((int)((v.X * xOffset) + (consoleX / 2.0f)) >= consoleX || (int)((v.X * xOffset) + (consoleX / 2.0f)) < 0 ||
                -(int)(v.Y - (consoleY / 2.0f)) >= (consoleY - 1) || -(int)(v.Y - (consoleY / 2.0f)) < 0) {

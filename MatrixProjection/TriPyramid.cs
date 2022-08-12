@@ -8,18 +8,18 @@ namespace MatrixProjection {
 
         public TriPyramid() {
 
-            // The Vector from which we make the perfect equilateral triangular base
-            // Changing this Vector increases the base's area
-            Vector firstVertex = new Vector(0.0f, -0.6f, 0.6f);
+            // The Vector3 from which we make the perfect equilateral triangular base
+            // Changing this Vector3 increases the base's area
+            Vector3 firstVertex = new Vector3(0.0f, -0.6f, 0.6f);
 
             // The vertex at the top of the pyramid
-            Vector topVertex = new Vector(0.0f, 1.0f, 0.0f);
+            Vector3 topVertex = new Vector3(0.0f, 1.0f, 0.0f);
 
             // Pre calculate the base, so we don't have to repeat Sin and Cos related calculations
-            Vector[] triBase = new Vector[3] {
+            Vector3[] triBase = new Vector3[3] {
                 firstVertex,
-                new Vector(-firstVertex.Z * (float)Math.Sin((Math.PI * -120.0f) / 180.0f), firstVertex.Y, firstVertex.Z * (float)Math.Cos((Math.PI * -120.0f) / 180.0f)),
-                new Vector(-firstVertex.Z * (float)Math.Sin((Math.PI * 120.0f) / 180.0f), firstVertex.Y, firstVertex.Z * (float)Math.Cos((Math.PI * 120.0f) / 180.0f))
+                new Vector3(-firstVertex.Z * (float)Math.Sin((Math.PI * -120.0f) / 180.0f), firstVertex.Y, firstVertex.Z * (float)Math.Cos((Math.PI * -120.0f) / 180.0f)),
+                new Vector3(-firstVertex.Z * (float)Math.Sin((Math.PI * 120.0f) / 180.0f), firstVertex.Y, firstVertex.Z * (float)Math.Cos((Math.PI * 120.0f) / 180.0f))
             };
 
             // Front

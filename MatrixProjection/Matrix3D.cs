@@ -10,7 +10,7 @@ namespace MatrixProjection {
 
         public Matrix3D Inverse => GetInverse();
 
-        public static Matrix3D VectToMat(Vector v) {
+        public static Matrix3D VectToMat(Vector3 v) {
 
             return new Matrix3D() {
 
@@ -22,14 +22,14 @@ namespace MatrixProjection {
             };
         }
 
-        public static Vector MatToVec(Matrix3D m) {
+        public static Vector3 MatToVec(Matrix3D m) {
 
-            return new Vector(m.Matrix[0, 0], 
+            return new Vector3(m.Matrix[0, 0], 
                               m.Matrix[1, 0], 
                               m.Matrix.GetLength(0) > 2 ? m.Matrix[2, 0] : 0);
         }
 
-        public static Vector MatMul(Vector v, Matrix3D m1) {
+        public static Vector3 MatMul(Vector3 v, Matrix3D m1) {
 
             Matrix3D m2 = VectToMat(v);
 
@@ -38,14 +38,14 @@ namespace MatrixProjection {
             return MatToVec(m3);
         }
 
-        public static Matrix3D MatMul(Matrix3D m1, Vector v) {
+        public static Matrix3D MatMul(Matrix3D m1, Vector3 v) {
 
             Matrix3D m2 = VectToMat(v);
 
             return MatMul(m1, m2);
         }
 
-        public static Vector MatMul4x4(Vector v, Matrix3D m) {
+        public static Vector3 MatMul4x4(Vector3 v, Matrix3D m) {
 
             Vector4 multVector = new Vector4(
                 v.X * m.Matrix[0, 0] + v.Y * m.Matrix[0, 1] + v.Z * m.Matrix[0, 2] + m.Matrix[0, 3],
@@ -53,7 +53,7 @@ namespace MatrixProjection {
                 v.X * m.Matrix[2, 0] + v.Y * m.Matrix[2, 1] + v.Z * m.Matrix[2, 2] + m.Matrix[2, 3],
                 v.X * m.Matrix[3, 0] + v.Y * m.Matrix[3, 1] + v.Z * m.Matrix[3, 2] + m.Matrix[3, 3]);
 
-            return (Vector)multVector;
+            return (Vector3)multVector;
         }
 
         public static Matrix3D MatMul(Matrix3D m1, Matrix3D m2) {

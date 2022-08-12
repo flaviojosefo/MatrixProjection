@@ -12,7 +12,7 @@ namespace MatrixProjection {
 
             float radius = 0.8f;
 
-            Vector[] verts = MakeDodecahedron(radius);
+            Vector3[] verts = MakeDodecahedron(radius);
 
             // Pentagon 1
             CreateTri(verts[0], verts[1], verts[3]);
@@ -80,7 +80,7 @@ namespace MatrixProjection {
         /// </summary>
         /// <param name="r">The distance of each vertex from origin.</param>
         /// <returns></returns>
-        private Vector[] MakeDodecahedron(float r) {
+        private Vector3[] MakeDodecahedron(float r) {
 
             // Calculate constants that will be used to generate vertices
             float phi = (float)(1 + Math.Sqrt(5)) / 2; // The golden ratio
@@ -89,29 +89,29 @@ namespace MatrixProjection {
             float b = a / phi;
             float c = a * phi;
 
-            List<Vector> vertices = new List<Vector>();
+            List<Vector3> vertices = new List<Vector3>();
 
             // Generate each vertex
             foreach (int i in new[] { -1, 1 }) {
 
                 foreach (int j in new[] { -1, 1 }) {
 
-                    vertices.Add(new Vector(
+                    vertices.Add(new Vector3(
                                         0,
                                         i * c * r,
                                         j * b * r));
-                    vertices.Add(new Vector(
+                    vertices.Add(new Vector3(
                                         i * c * r,
                                         j * b * r,
                                         0));
-                    vertices.Add(new Vector(
+                    vertices.Add(new Vector3(
                                         i * b * r,
                                         0,
                                         j * c * r));
 
                     foreach (int k in new[] { -1, 1 }) {
 
-                        vertices.Add(new Vector(
+                        vertices.Add(new Vector3(
                                             i * a * r,
                                             j * a * r,
                                             k * a * r));

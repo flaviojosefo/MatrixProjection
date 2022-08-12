@@ -8,9 +8,9 @@ namespace MatrixProjection {
         public abstract Triangle[] Polygons { get; protected set; }
 
         // Clockwise quad creation
-        //protected void CreateQuad(Vector origin, Vector axis0, Vector axis1) {
+        //protected void CreateQuad(Vector3 origin, Vector3 axis0, Vector3 axis1) {
 
-        //    Vector[] quad = new Vector[4];
+        //    Vector3[] quad = new Vector3[4];
 
         //    quad[0] = origin - axis0 - axis1;
         //    quad[1] = origin - axis0 + axis1;
@@ -22,9 +22,9 @@ namespace MatrixProjection {
         //}
 
         // Clockwise tri creation
-        protected void CreateTri(Vector v1, Vector v2, Vector v3) {
+        protected void CreateTri(Vector3 v1, Vector3 v2, Vector3 v3) {
 
-            Vector[] tri = new Vector[3];
+            Vector3[] tri = new Vector3[3];
 
             tri[0] = v1;
             tri[1] = v2;

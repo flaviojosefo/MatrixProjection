@@ -37,9 +37,9 @@ namespace MatrixProjection {
             }
         }
 
-        public void PlotPoint(Vector v) { // '\u25A0' -> OLD BLOCK | '\u2588' -> Full Block | '\u2593' -> Dark Shade | '\u2592' -> Medium Shade | '\u2591' -> Light Shade
+        public void PlotPoint(Vector3 v) { // '\u25A0' -> OLD BLOCK | '\u2588' -> Full Block | '\u2593' -> Dark Shade | '\u2592' -> Medium Shade | '\u2591' -> Light Shade
 
-            //Vector screenCoord = ConvertToScreen(v);
+            //Vector3 screenCoord = ConvertToScreen(v);
 
             if (!OutOfBounds(v)) {
 
@@ -135,7 +135,7 @@ namespace MatrixProjection {
                 // if not, divide triangle into two flat, smaller triangles
                 if (!flat) {
 
-                    Vector v4 = new Vector(sorted[0].X + (sorted[1].Y - sorted[0].Y) /
+                    Vector3 v4 = new Vector3(sorted[0].X + (sorted[1].Y - sorted[0].Y) /
                                           (sorted[2].Y - sorted[0].Y) *
                                           (sorted[2].X - sorted[0].X),
                                            sorted[1].Y);
@@ -146,7 +146,7 @@ namespace MatrixProjection {
             }
         }
 
-        private void FillTopFlatTriangle(Vector v1, Vector v2, Vector v3) {
+        private void FillTopFlatTriangle(Vector3 v1, Vector3 v2, Vector3 v3) {
 
             float invslope1 = (v2.X - v1.X) / (v2.Y - v1.Y);
             float invslope2 = (v3.X - v1.X) / (v3.Y - v1.Y);
@@ -156,13 +156,13 @@ namespace MatrixProjection {
 
             for (int scanlineY = (int)v1.Y; scanlineY <= v2.Y; scanlineY++) {
 
-                PlotLine(new Vector(curx1, scanlineY), new Vector(curx2, scanlineY));
+                PlotLine(new Vector3(curx1, scanlineY), new Vector3(curx2, scanlineY));
                 curx1 += invslope1;
                 curx2 += invslope2;
             }
         }
 
-        private void FillBottomFlatTriangle(Vector v1, Vector v2, Vector v3) {
+        private void FillBottomFlatTriangle(Vector3 v1, Vector3 v2, Vector3 v3) {
 
             float invslope1 = (v3.X - v1.X) / (v3.Y - v1.Y);
             float invslope2 = (v3.X - v2.X) / (v3.Y - v2.Y);
@@ -172,7 +172,7 @@ namespace MatrixProjection {
 
             for (int scanlineY = (int)v3.Y; scanlineY >= v1.Y; scanlineY--) {
 
-                PlotLine(new Vector(curx1, scanlineY), new Vector(curx2, scanlineY));
+                PlotLine(new Vector3(curx1, scanlineY), new Vector3(curx2, scanlineY));
                 curx1 -= invslope1;
                 curx2 -= invslope2;
             }
@@ -184,7 +184,7 @@ namespace MatrixProjection {
             Console.Write(frame);
         }
 
-        private bool OutOfBounds(Vector v) {
+        private bool OutOfBounds(Vector3 v) {
 
             if (v.X >= width || v.X < 0 ||
                -v.Y >= height || -v.Y < 0) {
@@ -195,7 +195,7 @@ namespace MatrixProjection {
             return false;
         }
 
-        public void AddText(Vector windowCoord, string text) {
+        public void AddText(Vector3 windowCoord, string text) {
 
             int index = (int)(windowCoord.X + (windowCoord.Y * width));
 
@@ -205,7 +205,7 @@ namespace MatrixProjection {
             }
         }
 
-        public void AddText(Vector windowCoord, char character) {
+        public void AddText(Vector3 windowCoord, char character) {
 
             int index = (int)(windowCoord.X + (windowCoord.Y * width));
 
@@ -214,9 +214,9 @@ namespace MatrixProjection {
 
         // Does not reverse 'Y' value (actual console Y)
         // Reversed 'Y' value is only used at the time of drawing and out of bounds verification
-        private Vector ConvertToScreen(Vector v) {
+        private Vector3 ConvertToScreen(Vector3 v) {
 
-            return new Vector((int)(v.X + (width / 2.0f)), (int)(v.Y - (height / 2.0f)));
+            return new Vector3((int)(v.X + (width / 2.0f)), (int)(v.Y - (height / 2.0f)));
         }
 
         private bool BackfaceCulled(Triangle polygon) {
@@ -243,7 +243,7 @@ namespace MatrixProjection {
 
             for (int i = 1; i < polygonCopy.VertexCount; i++) {
 
-                Vector chosen = polygonCopy[i];
+                Vector3 chosen = polygonCopy[i];
                 int j = i - 1;
 
                 while (j >= 0 && polygonCopy[j].Y > chosen.Y) {
@@ -264,7 +264,7 @@ namespace MatrixProjection {
          * 
          * Note: Better results with 'int' values than with 'float' (less jittery) */
 
-        public void PlotLine(Vector from, Vector to) {
+        public void PlotLine(Vector3 from, Vector3 to) {
 
             if (Math.Abs((int)to.Y - (int)from.Y) < Math.Abs((int)to.X - (int)from.X)) {
 
@@ -290,7 +290,7 @@ namespace MatrixProjection {
             }
         }
 
-        private void PlotLineLow(Vector from, Vector to) {
+        private void PlotLineLow(Vector3 from, Vector3 to) {
 
             int dx = (int)to.X - (int)from.X;
             int dy = (int)to.Y - (int)from.Y;
@@ -308,7 +308,7 @@ namespace MatrixProjection {
 
             for (int i = (int)from.X; i <= (int)to.X; i++) {
 
-                PlotPoint(new Vector(i, y));
+                PlotPoint(new Vector3(i, y));
 
                 if (D > 0) {
 
@@ -322,7 +322,7 @@ namespace MatrixProjection {
             }
         }
 
-        private void PlotLineHigh(Vector from, Vector to) {
+        private void PlotLineHigh(Vector3 from, Vector3 to) {
 
             int dx = (int)to.X - (int)from.X;
             int dy = (int)to.Y - (int)from.Y;
@@ -340,7 +340,7 @@ namespace MatrixProjection {
 
             for (int i = (int)from.Y; i <= (int)to.Y; i++) {
 
-                PlotPoint(new Vector(x, i));
+                PlotPoint(new Vector3(x, i));
 
                 if (D > 0) {
 

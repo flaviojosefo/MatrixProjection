@@ -38,7 +38,7 @@ namespace MatrixProjection {
                 {0, 0, 0, 1}
             };
 
-            // XYZ rotation = (((Z × Y) × X) × Vector) or (Z×Y×X)×V
+            // XYZ rotation = (((Z × Y) × X) × Vector3) or (Z×Y×X)×V
             Mat4x4 rotation = Mat4x4.MatMul(rotationZ, rotationY);
             rotation = Mat4x4.MatMul(rotation, rotationX);
 

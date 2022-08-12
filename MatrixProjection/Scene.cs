@@ -41,7 +41,7 @@ namespace MatrixProjection {
         public void Start() {
 
             camera = new Camera();
-            light = new Light { Direction = new Vector(0, 0, -1) };
+            light = new Light { Direction = new Vector3(0, 0, -1) };
 
             renderer = new Rasterizer(camera, light);
             frameBuffer = new FrameBuffer();
@@ -50,7 +50,7 @@ namespace MatrixProjection {
             input.Start();
 
             // Move object (slightly) back to not draw on top of camera
-            rObject.Transform.Move(new Vector(0, 0, -3));
+            rObject.Transform.Move(new Vector3(0, 0, -3));
         }
 
         public void Update() {
@@ -86,9 +86,9 @@ namespace MatrixProjection {
 
             if (rotate) {
 
-                if (rotateX) rObject.Transform.Rotate(new Vector(-0.04f, 0, 0));
-                if (rotateY) rObject.Transform.Rotate(new Vector(0, -0.04f, 0));
-                if (rotateZ) rObject.Transform.Rotate(new Vector(0, 0, -0.04f));
+                if (rotateX) rObject.Transform.Rotate(new Vector3(-0.04f, 0, 0));
+                if (rotateY) rObject.Transform.Rotate(new Vector3(0, -0.04f, 0));
+                if (rotateZ) rObject.Transform.Rotate(new Vector3(0, 0, -0.04f));
             }
         }
 
@@ -114,7 +114,7 @@ namespace MatrixProjection {
 
             for (int i = 0; i < menu.Length; i++) {
 
-                frameBuffer.AddText(new Vector(0, i), menu[i]);
+                frameBuffer.AddText(new Vector3(0, i), menu[i]);
             }
 
             string[] camInfo = new string[6];
@@ -129,10 +129,10 @@ namespace MatrixProjection {
             for (int i = 0; i < camInfo.Length; i++) {
 
                 int k = Console.WindowHeight - 1 + i - camInfo.Length;
-                frameBuffer.AddText(new Vector(0, k), camInfo[i]);
+                frameBuffer.AddText(new Vector3(0, k), camInfo[i]);
             }
 
-            frameBuffer.AddText(new Vector(5, cursorY), '►');
+            frameBuffer.AddText(new Vector3(5, cursorY), '►');
         }
 
         private void ManageInput() {
@@ -232,9 +232,9 @@ namespace MatrixProjection {
                     break;
 
                 case 9:
-                    rObject.Transform.Rotation = new Vector(); // Reset
+                    rObject.Transform.Rotation = new Vector3(); // Reset
 
-                    camera.Position = new Vector();
+                    camera.Position = new Vector3();
                     camera.Yaw = camera.Pitch = camera.Roll = 0;
                     break;
 

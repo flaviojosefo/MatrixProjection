@@ -4,17 +4,17 @@ namespace MatrixProjection {
 
     public struct Light {
 
-        public Vector Position { get; set; }
+        public Vector3 Position { get; set; }
 
-        public Vector Direction { get; set; }
+        public Vector3 Direction { get; set; }
 
         public float Intensity { get; set; }
 
-        public Light(Vector position, float intensity = 1.0f) {
+        public Light(Vector3 position, float intensity = 1.0f) {
 
             Position = position;
             Intensity = intensity;
-            Direction = new Vector(0, -1, 0);
+            Direction = new Vector3(0, -1, 0);
         }
     }
 }

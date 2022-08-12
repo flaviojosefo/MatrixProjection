@@ -7,11 +7,11 @@ namespace MatrixProjection {
         // Width / Height (Pixel ratio)
         private const float ASPECT_RATIO = (8 * 240) / (float)(16 * 63);
 
-        public Vector Position { get; set; }
+        public Vector3 Position { get; set; }
 
-        public Vector Up { get; private set; }
-        public Vector Forward { get; private set; }
-        public Vector Right { get; private set; }
+        public Vector3 Up { get; private set; }
+        public Vector3 Forward { get; private set; }
+        public Vector3 Right { get; private set; }
 
         public float Pitch { get; set; }
         public float Yaw { get; set; }
@@ -29,7 +29,7 @@ namespace MatrixProjection {
         private readonly Mat4x4 orthoProjection;
         private readonly Mat4x4 perspProjection; // Dynamic Fov needs a dynamic perspective projection!
 
-        public Camera(Vector startPos = new Vector()) {
+        public Camera(Vector3 startPos = new Vector3()) {
 
             Position = startPos;
 
@@ -99,23 +99,23 @@ namespace MatrixProjection {
             Mat4x4 camRot = Mat4x4.MatMul(rotZ, rotY);
             camRot = Mat4x4.MatMul(camRot, rotX);
 
-            Vector up = new Vector(0, 1, 0);
-            Vector target = new Vector(0, 0, -1);
+            Vector3 up = new Vector3(0, 1, 0);
+            Vector3 target = new Vector3(0, 0, -1);
 
-            Vector lookDir = Mat4x4.MatMul(camRot, target);
+            Vector3 lookDir = Mat4x4.MatMul(camRot, target);
             target = Position + lookDir;
 
             return LookAt(Position, target, up);
         }
 
         // https://learnopengl.com/Getting-started/Camera
-        public Mat4x4 LookAt(Vector worldPos, Vector targetPos, Vector newUp) {
+        public Mat4x4 LookAt(Vector3 worldPos, Vector3 targetPos, Vector3 newUp) {
 
             Forward = (targetPos - worldPos).Normalized;
 
-            Up = (newUp - (Forward * Vector.DotProduct(newUp, Forward))).Normalized;
+            Up = (newUp - (Forward * Vector3.DotProduct(newUp, Forward))).Normalized;
 
-            Right = Vector.CrossProduct(Up, Forward);
+            Right = Vector3.CrossProduct(Up, Forward);
 
             Mat4x4 rotation = new float[4, 4] {
                 {Right.X,Right.Y,Right.Z,0},
