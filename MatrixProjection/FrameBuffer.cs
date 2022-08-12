@@ -10,7 +10,7 @@ namespace MatrixProjection {
 
         private readonly int totalPixels;
 
-        private readonly StringBuilder frame;
+        private readonly StringBuilder buffer;
 
         public FrameBuffer() {
 
@@ -19,23 +19,23 @@ namespace MatrixProjection {
 
             totalPixels = width * height;
 
-            frame = new StringBuilder(totalPixels);
+            buffer = new StringBuilder(totalPixels);
         }
 
         public void NewFrame() {
 
-            frame.Clear();
+            buffer.Clear();
 
             for (int i = 0; i < totalPixels; i++) {
 
-                frame.Append(' ');
+                buffer.Append(' ');
             }
         }
 
         public void DrawFrame() {
 
             Console.SetCursorPosition(0, 0);
-            Console.Write(frame);
+            Console.Write(buffer);
         }
 
         public void AddText(Vector windowCoord, string text) {
@@ -44,7 +44,7 @@ namespace MatrixProjection {
 
             for (int i = 0; i < text.Length; i++) {
 
-                frame[index + i] = text[i];
+                buffer[index + i] = text[i];
             }
         }
 
@@ -52,7 +52,7 @@ namespace MatrixProjection {
 
             int index = (int)(windowCoord.X + (windowCoord.Y * width));
 
-            frame[index] = character;
+            buffer[index] = character;
         }
 
         // Only receives relevant fragments to be drawn
@@ -65,7 +65,7 @@ namespace MatrixProjection {
                     // 2D to 1D
                     int index = (int)frags[i].ScreenPos.X + (int)(-frags[i].ScreenPos.Y * width);
 
-                    frame[index] = (char)frags[i].Symbol;
+                    buffer[index] = (char)frags[i].Symbol;
                 }
             }
         }

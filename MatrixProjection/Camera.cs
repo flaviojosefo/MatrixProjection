@@ -5,7 +5,7 @@ namespace MatrixProjection {
     public class Camera {
 
         // Width / Height (Pixel ratio)
-        private const float ASPECT_RATIO = (8 * 243) / (float)(16 * 63);
+        private const float ASPECT_RATIO = (8 * 240) / (float)(16 * 63);
 
         public Vector Position { get; set; }
 
@@ -13,8 +13,8 @@ namespace MatrixProjection {
         public Vector Forward { get; private set; }
         public Vector Right { get; private set; }
 
-        public float Yaw { get; set; }
         public float Pitch { get; set; }
+        public float Yaw { get; set; }
         public float Roll { get; set; }
 
         public Projection Projection { get; set; } = Projection.Perspective;
@@ -26,8 +26,8 @@ namespace MatrixProjection {
         public Mat4x4 ViewMatrix => GetViewMatrix();
         public Mat4x4 ProjMatrix => IsOrthographic() ? orthoProjection : perspProjection;
 
-        private Mat4x4 orthoProjection;
-        private Mat4x4 perspProjection;
+        private readonly Mat4x4 orthoProjection;
+        private readonly Mat4x4 perspProjection; // Dynamic Fov needs a dynamic perspective projection!
 
         public Camera(Vector startPos = new Vector()) {
 
@@ -50,6 +50,18 @@ namespace MatrixProjection {
                 {0,0,-FarPlane / (FarPlane - NearPlane),-(FarPlane * NearPlane) / (FarPlane - NearPlane)},
                 {0,0,1,0}
             };
+
+            // https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/opengl-perspective-projection-matrix
+
+            //float scale = (float)Math.Tan(Fov * 0.5f * (Math.PI / 180.0f));
+            //float r = ASPECT_RATIO * scale, l = -r;
+            //float t = scale, b = -t;
+            //perspProjection = new float[4, 4] {
+            //    {(2 * NearPlane) / (r - l),0,0,0},
+            //    {0,(2 * NearPlane) / (t - b),0,0},
+            //    {(r + l) / (r - l),(t + b) / (t - b),-((FarPlane + NearPlane) / (FarPlane - NearPlane)),-1},
+            //    {0,0,-((2 * FarPlane * NearPlane) / (FarPlane - NearPlane)),0}
+            //};
         }
 
         private Mat4x4 GetViewMatrix() {

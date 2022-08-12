@@ -30,7 +30,7 @@ namespace MatrixProjection {
         public static Mat4x4 Vec4ToMat(Vector4 v) {
 
             return new float[1, 4] {
-                {v.X,v.Y,v.Z,v.W}
+                {v.X, v.Y,v.Z,v.W}
             };
         }
 
@@ -67,12 +67,9 @@ namespace MatrixProjection {
         // For vectors that represent 'positions'
         public static Vector MatMul(Vector v, Mat4x4 m) {
 
-            Vector multVector = new Vector(
-                v.X * m[0, 0] + v.Y * m[0, 1] + v.Z * m[0, 2] + m[0, 3],
-                v.X * m[1, 0] + v.Y * m[1, 1] + v.Z * m[1, 2] + m[1, 3],
-                v.X * m[2, 0] + v.Y * m[2, 1] + v.Z * m[2, 2] + m[2, 3]);
+            Vector4 multVector = MatMul((Vector4)v, m);
 
-            return multVector;
+            return (Vector)multVector / multVector.W;
         }
 
         // For vectors that respresent 'directions'

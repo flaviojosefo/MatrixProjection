@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace MatrixProjection {
@@ -142,11 +140,11 @@ namespace MatrixProjection {
             switch (Console.ReadKey(true).Key) {
 
                 case ConsoleKey.UpArrow:
-                    cursorY = cursorY > 2 ? cursorY - 1 : 10;
+                    cursorY = cursorY > 2 ? cursorY - 1 : 11;
                     break;
 
                 case ConsoleKey.DownArrow:
-                    cursorY = cursorY < 10 ? cursorY + 1 : 2;
+                    cursorY = cursorY < 11 ? cursorY + 1 : 2;
                     break;
 
                 case ConsoleKey.Enter:

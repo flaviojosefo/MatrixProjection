@@ -30,8 +30,6 @@ namespace MatrixProjection {
 
             Fragments.Clear();
 
-            Mat4x4 vp = Mat4x4.MatMul(camera.ProjMatrix, camera.ViewMatrix);
-
             Triangle[] worldTri = new Triangle[renderObject.Mesh.Polygons.Length];
 
             for (int i = 0; i < renderObject.Mesh.Polygons.Length; i++) {
@@ -58,12 +56,14 @@ namespace MatrixProjection {
 
                 for (int j = 0; j < projected[i].VertexCount; j++) {
 
-                    Vector4 v4 = Mat4x4.MatMul((Vector4)projected[i][j], vp);
+                    // World to View
+                    projected[i][j] = Mat4x4.MatMul(projected[i][j], camera.ViewMatrix);
 
-                    projected[i][j] = (Vector)v4 / v4.W;  // Perspective Division
+                    // View to Projection
+                    projected[i][j] = Mat4x4.MatMul(projected[i][j], camera.ProjMatrix);
 
                     // Scale Vectors
-                    projected[i][j] *= camera.IsOrthographic() ? 20.0f : 100.0f;  // Magic numbers :(
+                    projected[i][j] *= camera.IsOrthographic() ? 10.0f : 40.0f;  // Magic numbers >:(
                 }
             }
 
@@ -247,7 +247,13 @@ namespace MatrixProjection {
         // Reversed 'Y' value is only used at the time of drawing and out of bounds verification
         private Vector ConvertToScreen(Vector v) {
 
-            return new Vector((int)(v.X + (width / 2.0f)), (int)(v.Y - (height / 2.0f)));
+            return new Vector((int)(v.X + (width * 0.5f)), (int)(v.Y - (height * 0.5f)));
+        }
+
+        private Vector ConvertToRaster(Vector v) {
+
+            return new Vector((int)((-v.X + 1) * 0.5 * width),
+                              (int)((1 - (-v.Y + 1) * 0.5) * height));
         }
 
         private bool BackfaceCulled(Triangle polygon) {
