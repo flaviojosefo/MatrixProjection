@@ -66,6 +66,12 @@ namespace MatrixProjection {
 
         private Mat4x4 GetViewMatrix() {
 
+            // LEFT-Handed Coordinate System
+
+            // Rotation in X = Positive when Clockwise
+            // Rotation in Y = Positive when Clockwise
+            // Rotation in Z = Positive when Counter-Clockwise
+
             float cosPitch = (float)Math.Cos(Pitch * (Math.PI / 180.0f));
             float sinPitch = (float)Math.Sin(Pitch * (Math.PI / 180.0f));
 
