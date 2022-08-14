@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MatrixProjection {
+﻿namespace MatrixProjection {
 
     public class QuadPyramid : Mesh {
 
