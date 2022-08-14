@@ -18,8 +18,8 @@ namespace MatrixProjection {
             // Pre calculate the base, so we don't have to repeat Sin and Cos related calculations
             Vector3[] triBase = new Vector3[3] {
                 firstVertex,
-                new Vector3(-firstVertex.Z * (float)Math.Sin((Math.PI * -120.0f) / 180.0f), firstVertex.Y, firstVertex.Z * (float)Math.Cos((Math.PI * -120.0f) / 180.0f)),
-                new Vector3(-firstVertex.Z * (float)Math.Sin((Math.PI * 120.0f) / 180.0f), firstVertex.Y, firstVertex.Z * (float)Math.Cos((Math.PI * 120.0f) / 180.0f))
+                new Vector3(-firstVertex.Z * (float)Math.Sin(-120.0f * (Math.PI / 180.0f)), firstVertex.Y, firstVertex.Z * (float)Math.Cos(-120.0f * (Math.PI / 180.0f))),
+                new Vector3(-firstVertex.Z * (float)Math.Sin(120.0f * (Math.PI / 180.0f)), firstVertex.Y, firstVertex.Z * (float)Math.Cos(120.0f * (Math.PI / 180.0f)))
             };
 
             // Front

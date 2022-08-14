@@ -100,7 +100,7 @@ namespace MatrixProjection {
             camRot = Mat4x4.MatMul(camRot, rotX);
 
             Vector3 up = new Vector3(0, 1, 0);
-            Vector3 target = new Vector3(0, 0, -1);
+            Vector3 target = new Vector3(0, 0, 1); // Camera towards at +Z
 
             Vector3 lookDir = Mat4x4.MatMul(camRot, target);
             target = Position + lookDir;

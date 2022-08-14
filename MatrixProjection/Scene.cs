@@ -41,7 +41,7 @@ namespace MatrixProjection {
         public void Start() {
 
             camera = new Camera();
-            light = new Light { Direction = new Vector3(0, 0, -1) };
+            light = new Light { Direction = new Vector3(0, 0, 1) };
 
             renderer = new Rasterizer(camera, light);
             frameBuffer = new FrameBuffer();
@@ -50,7 +50,7 @@ namespace MatrixProjection {
             input.Start();
 
             // Move object (slightly) back to not draw on top of camera
-            rObject.Transform.Move(new Vector3(0, 0, -3));
+            rObject.Transform.Move(new Vector3(0, 0, 3));
         }
 
         public void Update() {
