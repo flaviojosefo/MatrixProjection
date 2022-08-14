@@ -184,11 +184,11 @@ namespace MatrixProjection {
                     break;
 
                 case ConsoleKey.NumPad5:
-                    camera.Pitch += 2.0f;                        // Turn Up
+                    camera.Pitch -= 2.0f;                        // Turn Up
                     break;
 
                 case ConsoleKey.NumPad8:
-                    camera.Pitch -= 2.0f;                        // Turn Down
+                    camera.Pitch += 2.0f;                        // Turn Down
                     break;
             }
 
