@@ -106,7 +106,8 @@ namespace MatrixProjection {
             // Viewport's Y is inverted (starts at the top)
             Vector3 p = new Vector3(v.X, -v.Y);
 
-            Fragments.Add(new Fragment(p, currSymbol, currColor));
+            if (WithinBounds(p))
+                Fragments.Add(new Fragment(p, currSymbol, currColor));
         }
 
         // Draws Vertices only
@@ -262,6 +263,13 @@ namespace MatrixProjection {
             }
 
             return sum >= 0;
+        }
+
+        // Check if point is within the view's frustum
+        private bool WithinBounds(Vector3 v) {
+
+            return (v.X >= 0) && (v.X < width) 
+                && (v.Y >= 0) && (v.Y < height);
         }
 
         // Insertion Sort Algorithm

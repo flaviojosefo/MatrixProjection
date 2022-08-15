@@ -60,26 +60,11 @@ namespace MatrixProjection {
 
             for (int i = 0; i < frags.Count; i++) {
 
-                if (!OutOfBounds(frags[i].ScreenPos)) {
+                // 2D to 1D
+                int index = (int)frags[i].ScreenPos.X + (int)(frags[i].ScreenPos.Y * width);
 
-                    // 2D to 1D
-                    int index = (int)frags[i].ScreenPos.X + (int)(frags[i].ScreenPos.Y * width);
-
-                    buffer[index] = (char)frags[i].Symbol;
-                }
+                buffer[index] = (char)frags[i].Symbol;
             }
-        }
-
-        // When clipping is implemented this SHOULD be discarded
-        private bool OutOfBounds(Vector3 screenV) {
-
-            if (screenV.X >= width || screenV.X < 0 ||
-                screenV.Y >= height || screenV.Y < 0) {
-
-                return true;
-            }
-
-            return false;
         }
     }
 }
