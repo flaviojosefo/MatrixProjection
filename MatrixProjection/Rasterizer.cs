@@ -243,10 +243,11 @@ namespace MatrixProjection {
              * in which some triangles are not rendered;
              * Y gets inverted again at 'PlotPoint' */
             return new Vector3((int)((v.X + 1) * 0.5f * width),
-                              -(int)((1 - (v.Y + 1) * 0.5f) * height)
+                              -(int)((1 - (v.Y + 1) * 0.5f) * height),
                               -v.Z);
         }
 
+        // Check if triangle is turning away from the camera
         private bool BackfaceCulled(Triangle polygon) {
 
             // Shoelace formula: https://en.wikipedia.org/wiki/Shoelace_formula#Statement
