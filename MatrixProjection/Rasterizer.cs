@@ -42,7 +42,8 @@ namespace MatrixProjection {
                     updatedTri[i][j] = Mat4x4.MatMul(rObject.Mesh.Polygons[i][j], rObject.ModelMatrix);
                 }
 
-                float lightDP = Vector3.DotProduct(updatedTri[i].Normal, light.Direction);
+                // For a triangle to be illuminated the DP between its normal and the light's direction must be > 0
+                float lightDP = Vector3.DotProduct(updatedTri[i].Normal, -light.Direction);
                 ShadeTri(ref updatedTri[i], lightDP);
 
                 for (int j = 0; j < updatedTri[i].VertexCount; j++) {
@@ -81,7 +82,7 @@ namespace MatrixProjection {
 
             //if (dotProduct < 0.0f) return ShadeChar.Null;
 
-            if (dotProduct <= 0.1f) {
+            if (dotProduct < 0.1f) {
 
                 tri.Color = ConsoleColor.DarkGray;
                 tri.Symbol = ShadeChar.Low;
