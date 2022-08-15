@@ -90,17 +90,10 @@ namespace MatrixProjection {
 
         public void Normalize() { this = Normalized; }
 
-        public override string ToString() {
+        public override string ToString() => $"({X},{Y},{Z})";
 
-            return $"({X},{Y},{Z})";
-        }
+        public override int GetHashCode() => base.GetHashCode();
 
-        public override int GetHashCode() {
-            return base.GetHashCode();
-        }
-
-        public override bool Equals(object obj) {
-            return base.Equals(obj);
-        }
+        public override bool Equals(object obj) => base.Equals(obj);
     }
 }

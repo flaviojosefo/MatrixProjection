@@ -46,5 +46,10 @@ namespace MatrixProjection {
         }
 
         public Vector3 this[int i] { get => vertices[i]; set => vertices[i] = value; }
+
+        public override string ToString() {
+
+            return $"[{vertices[0]} | {vertices[1]} | {vertices[2]}]";
+        }
     }
 }
