@@ -63,7 +63,7 @@ namespace MatrixProjection {
                 if (!OutOfBounds(frags[i].ScreenPos)) {
 
                     // 2D to 1D
-                    int index = (int)frags[i].ScreenPos.X + (int)(-frags[i].ScreenPos.Y * width);
+                    int index = (int)frags[i].ScreenPos.X + (int)(frags[i].ScreenPos.Y * width);
 
                     buffer[index] = (char)frags[i].Symbol;
                 }
@@ -74,7 +74,7 @@ namespace MatrixProjection {
         private bool OutOfBounds(Vector3 screenV) {
 
             if (screenV.X >= width || screenV.X < 0 ||
-               -screenV.Y >= height || -screenV.Y < 0) {
+                screenV.Y >= height || screenV.Y < 0) {
 
                 return true;
             }

@@ -35,18 +35,18 @@ namespace MatrixProjection {
 
             // Ortographic Projection
             orthoProjection = new float[4, 4] {
-                {1 * ASPECT_RATIO, 0, 0, 0},
+                {1 / ASPECT_RATIO, 0, 0, 0},
                 {0, 1, 0, 0},
                 {0, 0, 0, 0},
                 {0, 0, 0, 1}
             };
 
             // Perspective Projection
-            float fovRad = 1.0f / (float)Math.Tan(Fov * 0.5f * (Math.PI / 180.0f));
+            float fovTan = 1.0f / (float)Math.Tan(Fov * 0.5f * (Math.PI / 180.0f));
 
             perspProjection = new float[4, 4] {
-                {fovRad * ASPECT_RATIO,0,0,0},
-                {0,fovRad,0,0},
+                {fovTan / ASPECT_RATIO,0,0,0},
+                {0,fovTan,0,0},
                 {0,0,-FarPlane / (FarPlane - NearPlane),-(FarPlane * NearPlane) / (FarPlane - NearPlane)},
                 {0,0,1,0}
             };

@@ -56,9 +56,6 @@ namespace MatrixProjection {
 
                     // Perspective Division
                     updatedTri[i][j] = camera.IsOrthographic() ? (Vector3)tri4 : (Vector3)tri4 / tri4.W;
-
-                    // Scale Vectors
-                    updatedTri[i][j] *= camera.IsOrthographic() ? 10.0f : 40.0f;  // Magic numbers >:(
                 }
             }
 
@@ -106,7 +103,10 @@ namespace MatrixProjection {
 
         public void PlotPoint(Vector3 v) {
 
-            Fragments.Add(new Fragment(v, currSymbol, currColor));
+            // Viewport's Y is inverted (starts at the top)
+            Vector3 p = new Vector3(v.X, -v.Y);
+
+            Fragments.Add(new Fragment(p, currSymbol, currColor));
         }
 
         // Draws Vertices only
@@ -119,9 +119,7 @@ namespace MatrixProjection {
 
                 for (int j = 0; j < projected[i].VertexCount; j++) {
 
-                    projected[i][j] = ConvertToScreen(projected[i][j]);
-
-                    PlotPoint(projected[i][j]);
+                    PlotPoint(ConvertToRaster(projected[i][j]));
                 }
             }
         }
@@ -138,7 +136,7 @@ namespace MatrixProjection {
 
                 for (int j = 0; j < projected[i].VertexCount; j++) {
 
-                    projected[i][j] = ConvertToScreen(projected[i][j]);
+                    projected[i][j] = ConvertToRaster(projected[i][j]);
                 }
 
                 for (int j = 0; j < projected[i].VertexCount; j++) {
@@ -158,7 +156,7 @@ namespace MatrixProjection {
 
                 for (int j = 0; j < projected[i].VertexCount; j++) {
 
-                    projected[i][j] = ConvertToScreen(projected[i][j]);
+                    projected[i][j] = ConvertToRaster(projected[i][j]);
                 }
 
                 currSymbol = projected[i].Symbol;
@@ -172,7 +170,7 @@ namespace MatrixProjection {
 
                     // Verify if triangle is flat
                     if ((int)projected[i][j].Y == (int)projected[i][(j + 1) % projected[i].VertexCount].Y) {
-
+                        
                         flat = true;
 
                         if (prevY > projected[i][j].Y) {
@@ -239,16 +237,13 @@ namespace MatrixProjection {
         }
 
         // Does not reverse 'Y' value (actual console Y)
-        // Reversed 'Y' value is only used at the time of drawing and out of bounds verification
-        private Vector3 ConvertToScreen(Vector3 v) {
-
-            return new Vector3((int)(v.X + (width * 0.5f)), (int)(v.Y - (height * 0.5f)));
-        }
-
         private Vector3 ConvertToRaster(Vector3 v) {
 
-            return new Vector3((int)((-v.X + 1) * 0.5 * width),
-                              (int)((1 - (-v.Y + 1) * 0.5) * height));
+            /* Inverting the Y value 'fixes' a bug 
+             * in which some triangles are not rendered;
+             * Y gets inverted again at 'PlotPoint' */
+            return new Vector3((int)((v.X + 1) * 0.5f * width),
+                              -(int)((1 - (v.Y + 1) * 0.5f) * height));
         }
 
         private bool BackfaceCulled(Triangle polygon) {
