@@ -63,7 +63,7 @@ namespace MatrixProjection {
             //};
         }
 
-        // Mimics a FPS camera
+        // Mimics an FPS camera
         // https://www.3dgep.com/understanding-the-view-matrix/#FPS_Camera
         private Mat4x4 GetViewMatrix() {
 
