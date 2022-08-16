@@ -13,9 +13,8 @@ namespace MatrixProjection {
         public Vector3 Forward { get; private set; }
         public Vector3 Right { get; private set; }
 
-        public float Pitch { get; set; }
-        public float Yaw { get; set; }
-        public float Roll { get; set; }
+        public float Pitch { get; set; } // Degrees
+        public float Yaw { get; set; }   // Degrees
 
         public Projection Projection { get; set; } = Projection.Perspective;
 
@@ -23,7 +22,7 @@ namespace MatrixProjection {
         public float NearPlane { get; set; } = 0.1f;
         public float FarPlane { get; set; } = 100.0f;
 
-        public Mat4x4 ViewMatrix => GetViewMatrix();
+        public Mat4x4 ViewMatrix => GetViewMatrix(); // World-To-Camera Matrix
         public Mat4x4 ProjMatrix => IsOrthographic() ? orthoProjection : perspProjection;
 
         private readonly Mat4x4 orthoProjection;
@@ -47,8 +46,8 @@ namespace MatrixProjection {
             perspProjection = new float[4, 4] {
                 {fovTan / ASPECT_RATIO,0,0,0},
                 {0,fovTan,0,0},
-                {0,0,-FarPlane / (FarPlane - NearPlane),-(FarPlane * NearPlane) / (FarPlane - NearPlane)},
-                {0,0,1,0}
+                {0,0,-FarPlane / (FarPlane - NearPlane),1},
+                {0,0,-(FarPlane * NearPlane) / (FarPlane - NearPlane),0}
             };
 
             // https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/opengl-perspective-projection-matrix
@@ -64,80 +63,74 @@ namespace MatrixProjection {
             //};
         }
 
+        // Mimics a FPS camera
+        // https://www.3dgep.com/understanding-the-view-matrix/#FPS_Camera
         private Mat4x4 GetViewMatrix() {
 
             // LEFT-Handed Coordinate System
 
-            // Rotation in X = Positive when Clockwise
-            // Rotation in Y = Positive when Clockwise
-            // Rotation in Z = Positive when Counter-Clockwise
+            // Rotation in X = Positive when 'looking down'
+            // Rotation in Y = Positive when 'looking right'
+            // Rotation in Z = Positive when 'tilting left'
 
-            float cosPitch = (float)Math.Cos(Pitch * (Math.PI / 180.0f));
-            float sinPitch = (float)Math.Sin(Pitch * (Math.PI / 180.0f));
+            float toRad = (float)(Math.PI / 180.0f);
 
-            float cosYaw = (float)Math.Cos(Yaw * (Math.PI / 180.0f));
-            float sinYaw = (float)Math.Sin(Yaw * (Math.PI / 180.0f));
+            float cosPitch = (float)Math.Cos(Pitch * toRad);
+            float sinPitch = (float)Math.Sin(Pitch * toRad);
 
-            float cosRoll = (float)Math.Cos(Roll * (Math.PI / 180.0f));
-            float sinRoll = (float)Math.Sin(Roll * (Math.PI / 180.0f));
+            float cosYaw = (float)Math.Cos(Yaw * toRad);
+            float sinYaw = (float)Math.Sin(Yaw * toRad);
 
-            Mat4x4 rotX = new float[4, 4] {
-                {1, 0, 0, 0},
-                {0, cosPitch, -sinPitch, 0},
-                {0, sinPitch, cosPitch, 0},
-                {0, 0, 0, 1}
+            Right = new Vector3(cosYaw, 0, -sinYaw);
+
+            Up = new Vector3(sinYaw * sinPitch, cosPitch, cosYaw * sinPitch);
+
+            Forward = new Vector3(sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw);
+
+            // The inverse camera's translation
+            Vector3 transl = new Vector3(-Vector3.DotProduct(Right, Position),
+                                         -Vector3.DotProduct(Up, Position),
+                                         -Vector3.DotProduct(Forward, Position));
+
+            Mat4x4 viewMatrix = new float[4, 4] {
+                {Right.X,Up.X,Forward.X,0},
+                {Right.Y,Up.Y,Forward.Y,0},
+                {Right.Z,Up.Z,Forward.Z,0},
+                {transl.X,transl.Y,transl.Z,1}
             };
 
-            Mat4x4 rotY = new float[4, 4] {
-                {cosYaw, 0, sinYaw, 0},
-                {0, 1, 0, 0},
-                {-sinYaw, 0, cosYaw, 0},
-                {0, 0, 0, 1}
-            };
-
-            Mat4x4 rotZ = new float[4, 4] {
-                {cosRoll, -sinRoll, 0, 0},
-                {sinRoll, cosRoll, 0, 0},
-                {0, 0, 1, 0},
-                {0, 0, 0, 1}
-            };
-
-            Mat4x4 camRot = Mat4x4.MatMul(rotZ, rotY);
-            camRot = Mat4x4.MatMul(camRot, rotX);
-
-            Vector3 up = new Vector3(0, 1, 0);
-            Vector3 target = new Vector3(0, 0, 1); // Camera towards at +Z
-
-            Vector3 lookDir = Mat4x4.MatMul(camRot, target);
-            target = Position + lookDir;
-
-            return LookAt(Position, target, up);
+            return viewMatrix;
         }
 
         // https://learnopengl.com/Getting-started/Camera
-        public Mat4x4 LookAt(Vector3 worldPos, Vector3 targetPos, Vector3 newUp) {
+        // https://docs.microsoft.com/pt-pt/windows/win32/direct3d9/d3dxmatrixlookatlh
+        // Returns a LEFT-Handed View Matrix | Default up is Vector.Up
+        public Mat4x4 LookAt(Vector3 target, Vector3 up) {
 
-            Forward = (targetPos - worldPos).Normalized;
+            Forward = (target - Position).Normalized;               // Z axis
 
-            Up = (newUp - (Forward * Vector3.DotProduct(newUp, Forward))).Normalized;
+            Right = Vector3.CrossProduct(up, Forward).Normalized;   // X axis
 
-            Right = Vector3.CrossProduct(Up, Forward);
+            Up = Vector3.CrossProduct(Forward, Right);              // Y axis
 
-            Mat4x4 rotation = new float[4, 4] {
-                {Right.X,Right.Y,Right.Z,0},
-                {Up.X,Up.Y,Up.Z,0},
-                {Forward.X,Forward.Y,Forward.Z,0},
-                {0,0,0,1}
+            float toDeg = (float)(180.0f / Math.PI);
+
+            Pitch = -(float)Math.Asin(Forward.Y) * toDeg;
+            Yaw = (float)Math.Atan2(Forward.X, Forward.Z) * toDeg;
+
+            // The inverse camera's translation
+            Vector3 transl = new Vector3(-Vector3.DotProduct(Right, Position),
+                                         -Vector3.DotProduct(Up, Position),
+                                         -Vector3.DotProduct(Forward, Position));
+
+            Mat4x4 viewMatrix = new float[4, 4] {
+                {Right.X,Up.X,Forward.X,0},
+                {Right.Y,Up.Y,Forward.Y,0},
+                {Right.Z,Up.Z,Forward.Z,0},
+                {transl.X,transl.Y,transl.Z,1}
             };
 
-            Mat4x4 translation = new float[4, 4] {
-                {1,0,0,-Position.X},
-                {0,1,0,-Position.Y},
-                {0,0,1,-Position.Z},
-                {0,0,0,1}
-            };
-
-            return Mat4x4.MatMul(rotation, translation);
+            return viewMatrix;
         }
 
         public bool IsOrthographic() => Projection == Projection.Ortographic;

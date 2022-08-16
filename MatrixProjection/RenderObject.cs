@@ -13,23 +13,38 @@ namespace MatrixProjection {
 
         private Mat4x4 GetModelMatrix() {
 
+            float toRad = (float)(Math.PI / 180.0f);
+
+            // Precompute 'cos' and 'sin' of all rotation angles
+            float cosRotX = (float)Math.Cos(Transform.Rotation.X * toRad);
+            float sinRotX = (float)Math.Sin(Transform.Rotation.X * toRad);
+
+            float cosRotY = (float)Math.Cos(Transform.Rotation.Y * toRad);
+            float sinRotY = (float)Math.Sin(Transform.Rotation.Y * toRad);
+
+            float cosRotZ = (float)Math.Cos(Transform.Rotation.Z * toRad);
+            float sinRotZ = (float)Math.Sin(Transform.Rotation.Z * toRad);
+
+            // Use LEFT-Handed rotation matrices (as seen in DirectX)
+            // https://docs.microsoft.com/en-us/windows/win32/direct3d9/transforms#rotate
+
             Mat4x4 rotationX = new float[4, 4] {
                 {1, 0, 0, 0},
-                {0, (float)Math.Cos(Transform.Rotation.X), (float)-Math.Sin(Transform.Rotation.X), 0},
-                {0, (float)Math.Sin(Transform.Rotation.X), (float)Math.Cos(Transform.Rotation.X), 0},
+                {0, cosRotX, sinRotX, 0},
+                {0, -sinRotX, cosRotX, 0},
                 {0, 0, 0, 1}
             };
 
             Mat4x4 rotationY = new float[4, 4] {
-                {(float)Math.Cos(Transform.Rotation.Y), 0, (float)Math.Sin(Transform.Rotation.Y), 0},
+                {cosRotY, 0, -sinRotY, 0},
                 {0, 1, 0, 0},
-                {(float)-Math.Sin(Transform.Rotation.Y), 0, (float)Math.Cos(Transform.Rotation.Y), 0},
+                {sinRotY, 0, cosRotY, 0},
                 {0, 0, 0, 1}
             };
 
             Mat4x4 rotationZ = new float[4, 4] {
-                {(float)Math.Cos(Transform.Rotation.Z), (float)-Math.Sin(Transform.Rotation.Z), 0, 0},
-                {(float)Math.Sin(Transform.Rotation.Z), (float)Math.Cos(Transform.Rotation.Z), 0, 0},
+                {cosRotZ, sinRotZ, 0, 0},
+                {-sinRotZ, cosRotZ, 0, 0},
                 {0, 0, 1, 0},
                 {0, 0, 0, 1}
             };
@@ -39,11 +54,13 @@ namespace MatrixProjection {
             rotation = Mat4x4.MatMul(rotation, rotationX);
 
             Mat4x4 translation = new float[4, 4] {
-                {1,0,0,Transform.Position.X},
-                {0,1,0,Transform.Position.Y},
-                {0,0,1,Transform.Position.Z},
-                {0,0,0,1}
+                {1,0,0,0},
+                {0,1,0,0},
+                {0,0,1,0},
+                {Transform.Position.X,Transform.Position.Y,Transform.Position.Z,1}
             };
+
+            //translation = Mat4x4.Transpose(translation);
 
             Mat4x4 scaling = new float[4, 4] {
                 {Transform.Scale.X,0,0,0},
@@ -52,8 +69,8 @@ namespace MatrixProjection {
                 {0,0,0,1}
             };
 
-            // Model Matrix = S × R × T (read right to left)
-            return Mat4x4.MatMul(Mat4x4.MatMul(translation, rotation), scaling);
+            // Model Matrix = T × R × S (right to left order)
+            return Mat4x4.MatMul(Mat4x4.MatMul(scaling, rotation), translation);
         }
 
         public static RenderObject Create<T>() where T : Mesh, new() => 

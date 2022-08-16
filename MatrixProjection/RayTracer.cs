@@ -103,7 +103,7 @@ namespace MatrixProjection {
             // Step 1: Finding P
 
             // Assign default value to hitPoint
-            hitPoint = new Vector3();
+            hitPoint = Vector3.Zero;
 
             // Cache the triangle's normal vector
             Vector3 triNormal = tri.Normal;

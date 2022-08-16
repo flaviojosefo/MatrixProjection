@@ -2,6 +2,7 @@
 
 namespace MatrixProjection {
 
+    // LEFT-Handed and ROW-Major
     public struct Mat4x4 {
 
         private float[,] matrix;
@@ -30,7 +31,7 @@ namespace MatrixProjection {
         public static Mat4x4 Vec4ToMat(Vector4 v) {
 
             return new float[1, 4] {
-                {v.X, v.Y,v.Z,v.W}
+                {v.X,v.Y,v.Z,v.W}
             };
         }
 
@@ -46,22 +47,13 @@ namespace MatrixProjection {
 
         public static Vector4 MatToVec4(Mat4x4 m) {
 
-            return new Vector4(m[0, 0],
-                               m[0, 1],
-                               m[0, 2],
-                               m[0, 3]);
+            return new Vector4(m[0,0], m[0,1], m[0,2], m[0,3]);
         }
 
         // For vectors that store the 'W' component
         public static Vector4 MatMul(Vector4 v, Mat4x4 m) {
 
-            Vector4 multVector = new Vector4(
-                v.X * m[0, 0] + v.Y * m[0, 1] + v.Z * m[0, 2] + v.W * m[0, 3],
-                v.X * m[1, 0] + v.Y * m[1, 1] + v.Z * m[1, 2] + v.W * m[1, 3],
-                v.X * m[2, 0] + v.Y * m[2, 1] + v.Z * m[2, 2] + v.W * m[2, 3],
-                v.X * m[3, 0] + v.Y * m[3, 1] + v.Z * m[3, 2] + v.W * m[3, 3]);
-
-            return multVector;
+            return MatToVec4(MatMul(Vec4ToMat(v), m));
         }
 
         // For vectors that represent 'positions'
@@ -70,15 +62,12 @@ namespace MatrixProjection {
             return (Vector3)MatMul((Vector4)v, m);
         }
 
-        // For vectors that respresent 'directions'
+        // For vectors that represent 'directions'
         public static Vector3 MatMul(Mat4x4 m, Vector3 v) {
 
-            Vector3 multVector = new Vector3(
-                v.X * m[0, 0] + v.Y * m[0, 1] + v.Z * m[0, 2],
-                v.X * m[1, 0] + v.Y * m[1, 1] + v.Z * m[1, 2],
-                v.X * m[2, 0] + v.Y * m[2, 1] + v.Z * m[2, 2]);
+            Vector4 v4 = new Vector4(v.X, v.Y, v.Z, 0);
 
-            return multVector;
+            return (Vector3)MatMul(v4, m);
         }
 
         public static Mat4x4 MatMul(Mat4x4 m1, Mat4x4 m2) {

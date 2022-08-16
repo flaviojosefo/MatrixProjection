@@ -86,9 +86,9 @@ namespace MatrixProjection {
 
             if (rotate) {
 
-                if (rotateX) rObject.Transform.Rotate(new Vector3(-0.04f, 0, 0));
-                if (rotateY) rObject.Transform.Rotate(new Vector3(0, -0.04f, 0));
-                if (rotateZ) rObject.Transform.Rotate(new Vector3(0, 0, -0.04f));
+                if (rotateX) rObject.Transform.Rotate(new Vector3(-2.5f, 0, 0));
+                if (rotateY) rObject.Transform.Rotate(new Vector3(0, -2.5f, 0));
+                if (rotateZ) rObject.Transform.Rotate(new Vector3(0, 0, -2.5f));
             }
         }
 
@@ -232,10 +232,10 @@ namespace MatrixProjection {
                     break;
 
                 case 9:
-                    rObject.Transform.Rotation = new Vector3(); // Reset
+                    rObject.Transform.Rotation = Vector3.Zero; // Reset
 
-                    camera.Position = new Vector3();
-                    camera.Yaw = camera.Pitch = camera.Roll = 0;
+                    camera.Position = Vector3.Zero;
+                    camera.Yaw = camera.Pitch = 0;
                     break;
 
                 case 10:
