@@ -9,7 +9,7 @@ namespace MatrixProjection {
         public SimpleTri() {
 
             // The center of the triangle
-            Vector3 triCenter = new Vector3();
+            Vector3 triCenter = Vector3.Zero;
 
             // The distance from the center to each vertex
             float dist = 2f;

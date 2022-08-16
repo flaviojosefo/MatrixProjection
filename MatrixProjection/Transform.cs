@@ -6,7 +6,7 @@ namespace MatrixProjection {
 
         public Vector3 Position { get; set; }
         public Vector3 Rotation { get; set; }
-        public Vector3 Scale { get; set; } = new Vector3(1, 1, 1);
+        public Vector3 Scale { get; set; } = Vector3.One;
 
         public Transform() { }
 

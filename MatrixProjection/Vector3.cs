@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace MatrixProjection {
 
@@ -11,6 +12,33 @@ namespace MatrixProjection {
         public float Magnitude => GetMagnitude();
 
         public Vector3 Normalized => this / Magnitude;
+
+        private static readonly Vector3 zeroV = new Vector3(0f, 0f, 0f);
+        private static readonly Vector3 oneV = new Vector3(1f, 1f, 1f);
+        private static readonly Vector3 rightV = new Vector3(1f, 0f, 0f);
+        private static readonly Vector3 upV = new Vector3(0f, 1f, 0f);
+        private static readonly Vector3 forwardV = new Vector3(0f, 0f, 1f);
+
+        public static Vector3 Zero {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => zeroV;
+        }
+        public static Vector3 One {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => oneV;
+        }
+        public static Vector3 Right {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => rightV;
+        }
+        public static Vector3 Up {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => upV;
+        }
+        public static Vector3 Forward {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => forwardV;
+        }
 
         public Vector3(float x, float y, float z = 0) {
 
