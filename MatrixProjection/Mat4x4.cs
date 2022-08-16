@@ -105,11 +105,11 @@ namespace MatrixProjection {
 
         public static Mat4x4 Transpose(Mat4x4 m) {
 
-            float[,] transposed = new float[m.GetLength(0), m.GetLength(1)];
+            float[,] transposed = new float[m.GetLength(1), m.GetLength(0)];
 
-            for (int i = 0; i < m.GetLength(0); i++) {
+            for (int i = 0; i < m.GetLength(1); i++) {
 
-                for (int j = 0; j < m.GetLength(1); j++) {
+                for (int j = 0; j < m.GetLength(0); j++) {
 
                     transposed[i, j] = m[j, i];
                 }
