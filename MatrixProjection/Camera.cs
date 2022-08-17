@@ -22,7 +22,8 @@ namespace MatrixProjection {
         public float NearPlane { get; set; } = 0.1f;
         public float FarPlane { get; set; } = 100.0f;
 
-        public Mat4x4 ViewMatrix => GetViewMatrix(); // World-To-Camera Matrix
+        public Mat4x4 CameraMatrix => GetCameraMatrix(); // Camera-To-World Matrix
+        public Mat4x4 ViewMatrix => GetViewMatrix();     // World-To-Camera Matrix
         public Mat4x4 ProjMatrix => IsOrthographic() ? orthoProjection : perspProjection;
 
         private readonly Mat4x4 orthoProjection;
@@ -92,6 +93,8 @@ namespace MatrixProjection {
                                          -Vector3.DotProduct(Up, Position),
                                          -Vector3.DotProduct(Forward, Position));
 
+            // Join rotation and translation in a single matrix
+            // instead of calculating their multiplication
             Mat4x4 viewMatrix = new float[4, 4] {
                 {Right.X,Up.X,Forward.X,0},
                 {Right.Y,Up.Y,Forward.Y,0},
@@ -100,6 +103,37 @@ namespace MatrixProjection {
             };
 
             return viewMatrix;
+        }
+
+        // Inverse of the View Matrix
+        // Faster to calculate it directly instead of inverting the view matrix
+        // https://www.3dgep.com/understanding-the-view-matrix/#Converting_between_Camera_Transformation_Matrix_and_View_Matrix
+        private Mat4x4 GetCameraMatrix() {
+
+            float toRad = (float)(Math.PI / 180.0f);
+
+            float cosPitch = (float)Math.Cos(Pitch * toRad);
+            float sinPitch = (float)Math.Sin(Pitch * toRad);
+
+            float cosYaw = (float)Math.Cos(Yaw * toRad);
+            float sinYaw = (float)Math.Sin(Yaw * toRad);
+
+            Right = new Vector3(cosYaw, 0, -sinYaw);
+
+            Up = new Vector3(sinYaw * sinPitch, cosPitch, cosYaw * sinPitch);
+
+            Forward = new Vector3(sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw);
+
+            // Join rotation and translation in a single matrix
+            // instead of calculating their multiplication
+            Mat4x4 cameraMatrix = new float[4, 4] {
+                {Right.X,Right.Y,Right.Z,0},
+                {Up.X,Up.Y,Up.Z,0},
+                {Forward.X,Forward.Y,Forward.Z,0},
+                {Position.X,Position.Y,Position.Z,1}
+            };
+
+            return cameraMatrix;
         }
 
         // https://learnopengl.com/Getting-started/Camera
