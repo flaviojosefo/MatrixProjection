@@ -60,8 +60,6 @@ namespace MatrixProjection {
                 {Transform.Position.X,Transform.Position.Y,Transform.Position.Z,1}
             };
 
-            //translation = Mat4x4.Transpose(translation);
-
             Mat4x4 scaling = new float[4, 4] {
                 {Transform.Scale.X,0,0,0},
                 {0,Transform.Scale.Y,0,0},

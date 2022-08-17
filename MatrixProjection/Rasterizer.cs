@@ -28,8 +28,16 @@ namespace MatrixProjection {
 
         public void Render(RenderObject rObject) {
 
+            // Remove all previous fragments
             Fragments.Clear();
 
+            // Precompute all necessary matrices (MVP)
+            // (((v * M) * V) * P) -> Row Major ('v' on the right)
+            Mat4x4 modelMatrix = rObject.ModelMatrix;
+            Mat4x4 viewMatrix = camera.ViewMatrix;
+            Mat4x4 projectionMatrix = camera.ProjMatrix;
+
+            // Create array to store transformed triangles
             Triangle[] updatedTri = new Triangle[rObject.Mesh.Polygons.Length];
 
             for (int i = 0; i < rObject.Mesh.Polygons.Length; i++) {
@@ -39,7 +47,7 @@ namespace MatrixProjection {
                 for (int j = 0; j < rObject.Mesh.Polygons[i].VertexCount; j++) {
 
                     // Object to World space (Local to World coords)
-                    updatedTri[i][j] = Mat4x4.MatMul(rObject.Mesh.Polygons[i][j], rObject.ModelMatrix);
+                    updatedTri[i][j] = Mat4x4.MatMul(rObject.Mesh.Polygons[i][j], modelMatrix);
                 }
 
                 // For a triangle to be illuminated the DP between its normal and the light's direction must be > 0
@@ -49,10 +57,10 @@ namespace MatrixProjection {
                 for (int j = 0; j < updatedTri[i].VertexCount; j++) {
 
                     // World to View
-                    Vector4 tri4 = Mat4x4.MatMul((Vector4)updatedTri[i][j], camera.ViewMatrix);
+                    Vector4 tri4 = Mat4x4.MatMul((Vector4)updatedTri[i][j], viewMatrix);
 
                     // View to Projection
-                    tri4 = Mat4x4.MatMul(tri4, camera.ProjMatrix);
+                    tri4 = Mat4x4.MatMul(tri4, projectionMatrix);
 
                     // Perspective Division
                     updatedTri[i][j] = camera.IsOrthographic() ? (Vector3)tri4 : (Vector3)tri4 / tri4.W;
