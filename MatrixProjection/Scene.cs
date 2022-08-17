@@ -43,7 +43,7 @@ namespace MatrixProjection {
             camera = new Camera();
             light = new Light { Direction = new Vector3(0, 0, 1) };
 
-            renderer = new Rasterizer(camera, light);
+            renderer = new RayTracer(camera, light);
             frameBuffer = new FrameBuffer();
 
             input = new Thread(ManageInput);
@@ -189,6 +189,14 @@ namespace MatrixProjection {
 
                 case ConsoleKey.NumPad8:
                     camera.Pitch += 2.0f;                        // Turn Down
+                    break;
+
+                case ConsoleKey.Add:
+                    camera.Fov += 1.0f;                          // Zoom Out
+                    break;
+
+                case ConsoleKey.Subtract:                        // Zoom In
+                    camera.Fov -= 1.0f;
                     break;
             }
 
