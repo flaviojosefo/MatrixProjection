@@ -43,17 +43,21 @@ namespace MatrixProjection {
 
             // Ray Tracing Algorithm
 
-            Vector3 worldOrigin = new Vector3(); // THIS SHOULD BE REPLACED BY CAMERA POSITION
+            // Precompute the camera's matrix
+            Mat4x4 cameraMatrix = camera.CameraMatrix;
+
+            // Cache the rays' origin
+            Vector3 origin = camera.Position;
 
             for (int y = 0; y < height; y++) { 
             
                 for (int x = 0; x < width; x++) {
 
-                    Vector3 pRay = CreatePrimaryRay(worldOrigin, new Vector3(x, y));
+                    Vector3 pRay = CreatePrimaryRay(origin, new Vector3(x, y), cameraMatrix);
 
                     for (int i = 0; i < updatedTri.Length; i++) {
 
-                        if (Intersects(worldOrigin, pRay, updatedTri[i], out Vector3 hit)) {
+                        if (Intersects(origin, pRay, updatedTri[i], out Vector3 hit)) {
 
                             Fragments.Add(new Fragment(new Vector3(x, y), ShadeChar.Full));
                         }
@@ -62,7 +66,7 @@ namespace MatrixProjection {
             }
         }
 
-        private Vector3 CreatePrimaryRay(Vector3 origin, Vector3 screenPos) {
+        private Vector3 CreatePrimaryRay(Vector3 origin, Vector3 screenPos, Mat4x4 camMatrix) {
 
             float aspectRatio = (8 * width) / (float)(16 * height);
 
@@ -74,6 +78,8 @@ namespace MatrixProjection {
                 ((2 * ((screenPos.X + 0.5f) / width)) - 1) * fovTan * aspectRatio,
                 (1 - (2 * ((screenPos.Y + 0.5f) / height))) * fovTan,
                 1);
+
+            imgPlaneCoord = Mat4x4.MatMul(imgPlaneCoord, camMatrix);
 
             // Multiply the above Vector3 by CamToWorld matrix (Inverse of ViewMatrix (also called WorldToCam))
             // Get the Vector3 that goes toward the pixel in world coords (PixelWorldPos - CamPos)
