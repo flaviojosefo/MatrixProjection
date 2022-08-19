@@ -56,23 +56,24 @@ namespace MatrixProjection {
         // https://gafferongames.com/post/fix_your_timestep/
         public void Run() {
 
-            int fps = 0;                                    // The Frames p/ Second value (only counts display frames)
-            int fpsCounter = 0;                             // The Frames counter
-            double fpsStart = 0.0d;                         // The time at which fps should start be reset
+            int fps = 0;                                       // The Frames p/ Second value (only counts display frames)
+            int fpsCounter = 0;                                // The Frames counter
+            double fpsStart = 0.0d;                            // The time at which fps should start after reset
 
-            int fpsInterval = 1;                            // The interval of time (in seconds) to update fps
+            int fpsInterval = 1;                               // The interval of time (in seconds) to update fps
 
-            double t = 0.0d;                                // The total time since the start of the loop
-            double dt = 1 / 60.0d;                          // The upper bound for delta time
+            double t = 0.0d;                                   // The total time since the start of the loop
+            double dt = 1 / 60.0d;                             // The upper bound for delta time
 
             Stopwatch timer = Stopwatch.StartNew();            // Start the timer
             double currentTime = timer.Elapsed.TotalSeconds;   // The current (time in seconds)
 
+            // The 'game' loop
             while (loop) {
 
                 double newTime = timer.Elapsed.TotalSeconds;   // The time at the start of the frame
-                double frameTime = newTime - currentTime;   // The diff in time between the previous and current frame
-                currentTime = newTime;                      // Update the current time
+                double frameTime = newTime - currentTime;      // The diff in time between the previous and current frame
+                currentTime = newTime;                         // Update the current time
 
                 // Allow multiple updates within 1 frame (if possible)
                 while (frameTime > 0.0d) {
