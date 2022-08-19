@@ -79,12 +79,11 @@ namespace MatrixProjection {
                 (1 - (2 * ((screenPos.Y + 0.5f) / height))) * fovTan,
                 1);
 
+            // Multiply our plane coordinate by the camera matrix to
+            // account for camera translation and rotation
             imgPlaneCoord = Mat4x4.MatMul(imgPlaneCoord, camMatrix);
 
-            // Multiply the above Vector3 by CamToWorld matrix (Inverse of ViewMatrix (also called WorldToCam))
-            // Get the Vector3 that goes toward the pixel in world coords (PixelWorldPos - CamPos)
-            // Return the normalized Vector3
-
+            // Get the vector going towards that plane coordinate
             return (imgPlaneCoord - origin).Normalized;
         }
 
