@@ -63,23 +63,23 @@ namespace MatrixProjection {
             switch(optionN + 1) {
 
                 case 1:
-                    scene = new Scene(60, RenderObject.Create<Cube>());
+                    scene = new Scene(RenderObject.Create<Cube>());
                     break;
 
                 case 2:
-                    scene = new Scene(60, RenderObject.Create<QuadPyramid>());
+                    scene = new Scene(RenderObject.Create<QuadPyramid>());
                     break;
 
                 case 3:
-                    scene = new Scene(60, RenderObject.Create<TriPyramid>());
+                    scene = new Scene(RenderObject.Create<TriPyramid>());
                     break;
 
                 case 4:
-                    scene = new Scene(60, RenderObject.Create<Engram>());
+                    scene = new Scene(RenderObject.Create<Engram>());
                     break;
 
                 case 5:
-                    scene = new Scene(60, RenderObject.Create<SimpleTri>());
+                    scene = new Scene(RenderObject.Create<SimpleTri>());
                     break;
 
                 case 6:
@@ -88,7 +88,7 @@ namespace MatrixProjection {
             }
 
             scene?.Start();
-            scene?.Update();
+            scene?.Run();
         }
     }
 }

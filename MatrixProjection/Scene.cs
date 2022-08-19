@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -12,8 +13,6 @@ namespace MatrixProjection {
 
         private IRenderer renderer;
         private FrameBuffer frameBuffer;
-
-        private readonly float deltaTime;
 
         private readonly RenderObject rObject;
 
@@ -29,11 +28,11 @@ namespace MatrixProjection {
         private bool rotateY = true;
         private bool rotateZ = false;
 
-        //Stopwatch timer = new Stopwatch();
+        private readonly Stopwatch timer = new Stopwatch();
+        // https://www.youtube.com/watch?v=lW6ZtvQVzyg
+        // https://stackoverflow.com/questions/26110228/c-sharp-delta-time-implementation#:~:text=DeltaTime%20like%20in,2493331%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20time1%20%3D%20time2%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%7D
 
-        public Scene(int frameRate, RenderObject rObject) {
-
-            deltaTime = 1000 / frameRate;
+        public Scene(RenderObject rObject) {
 
             this.rObject = rObject;
         }
@@ -43,7 +42,7 @@ namespace MatrixProjection {
             camera = new Camera();
             light = new Light { Direction = new Vector3(0, 0, 1) };
 
-            renderer = new RayTracer(camera, light);
+            renderer = new Rasterizer(camera, light);
             frameBuffer = new FrameBuffer();
 
             input = new Thread(ManageInput);
@@ -53,28 +52,101 @@ namespace MatrixProjection {
             rObject.Transform.Move(new Vector3(0, 0, 3));
         }
 
-        public void Update() {
+        // The method containing the Scene's loop
+        // https://gafferongames.com/post/fix_your_timestep/
+        public void Run() {
 
-            // Loop
+            int fps = 0;                                    // The Frames p/ Second value (only counts display frames)
+            int fpsCounter = 0;                             // The Frames counter
+            double fpsStart = 0.0d;                         // The time at which fps should start be reset
+
+            int fpsInterval = 1;                            // The interval of time (in seconds) to update fps
+
+            double t = 0.0d;                                // The total time since the start of the loop
+            double dt = 1 / 60.0d;                          // The upper bound for delta time
+
+            Stopwatch timer = Stopwatch.StartNew();            // Start the timer
+            double currentTime = timer.Elapsed.TotalSeconds;   // The current (time in seconds)
+
             while (loop) {
 
-                //time1.Restart();
+                double newTime = timer.Elapsed.TotalSeconds;   // The time at the start of the frame
+                double frameTime = newTime - currentTime;   // The diff in time between the previous and current frame
+                currentTime = newTime;                      // Update the current time
 
-                frameBuffer.NewFrame();
+                // Allow multiple updates within 1 frame (if possible)
+                while (frameTime > 0.0d) {
 
-                Render3D();
-                RenderUI();
+                    // Calculate the delta time
+                    float deltaTime = (float)Math.Min(frameTime, dt);
 
-                frameBuffer.DrawFrame();
+                    // Update logic
+                    Update(deltaTime);
 
-                //timer.Stop();
-                //Console.SetCursorPosition(1, 0);
-                //Console.Write(' ');
-                //Console.SetCursorPosition(0, 0);
-                //Console.Write(timer.ElapsedMilliseconds);
+                    // Decrease frame time
+                    frameTime -= deltaTime;
 
-                Thread.Sleep((int)deltaTime);
+                    // Increase the total time
+                    t += deltaTime;
+                }
+
+                // Render the scene
+                Draw();
+
+                // Increase the fps counter by 1
+                fpsCounter++;
+
+                // Calculate if enough time has passed in order to update the fps
+                if (t - fpsStart >= fpsInterval) {
+
+                    // Assign the current time as the new "start"
+                    fpsStart = t;
+
+                    // Divide the counter by the seconds interval (as we want frames per SECOND)
+                    fps = (int)(fpsCounter / (float)fpsInterval);
+
+                    // Reset the fps counter
+                    fpsCounter = 0;
+                }
+
+                // Display current time and fps
+                //Console.Write((int)t + " | " + fps);
             }
+        }
+
+        // Process scene objects
+        private void Update(float deltaTime) {
+
+            // Rotate the current render object
+            if (rotate) {
+
+                Vector3 rotation = Vector3.Zero;
+
+                if (rotateX)
+                    rotation += new Vector3(-90f, 0, 0);  // Rotate 90 Deg downwards
+
+                if (rotateY)
+                    rotation += new Vector3(0, -90f, 0);  // Rotate 90 Deg rightwards
+
+                if (rotateZ)
+                    rotation += new Vector3(0, 0, -90f);  // Rotate 90 Deg rightwards (tilt)
+
+                if (rotation != Vector3.Zero)
+                    rObject.Transform.Rotate(rotation * deltaTime);
+            }
+        }
+
+        // Render scene objects
+        private void Draw() {
+
+            // Empty the frame buffer
+            frameBuffer.Clear();
+
+            Render3D();
+            RenderUI();
+
+            // Draw the scene on the the viewport
+            frameBuffer.Draw();
         }
 
         // Render 3D Objects
@@ -83,13 +155,6 @@ namespace MatrixProjection {
             renderer.Render(rObject);
 
             frameBuffer.GetFragmentData(renderer.Fragments);
-
-            if (rotate) {
-
-                if (rotateX) rObject.Transform.Rotate(new Vector3(-2.5f, 0, 0));
-                if (rotateY) rObject.Transform.Rotate(new Vector3(0, -2.5f, 0));
-                if (rotateZ) rObject.Transform.Rotate(new Vector3(0, 0, -2.5f));
-            }
         }
 
         // Render 2nd (on top)

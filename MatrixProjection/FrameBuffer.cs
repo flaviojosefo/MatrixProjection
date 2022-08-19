@@ -22,7 +22,7 @@ namespace MatrixProjection {
             buffer = new StringBuilder(totalPixels);
         }
 
-        public void NewFrame() {
+        public void Clear() {
 
             buffer.Clear();
 
@@ -32,7 +32,7 @@ namespace MatrixProjection {
             }
         }
 
-        public void DrawFrame() {
+        public void Draw() {
 
             Console.SetCursorPosition(0, 0);
             Console.Write(buffer);
