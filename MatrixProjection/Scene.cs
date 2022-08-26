@@ -48,7 +48,7 @@ namespace MatrixProjection {
             input = new Thread(ManageInput);
             input.Start();
 
-            // Move object (slightly) back to not draw on top of camera
+            // Move object (slightly) forward to not draw on top of camera
             rObject.Transform.Move(new Vector3(0, 0, 3));
         }
 
