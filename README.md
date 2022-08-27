@@ -1,2 +1,2 @@
 # MatrixProjection
-A 3D Engine running on the Windows Console.
+A 3D Engine displaying objects on the Windows Console.
