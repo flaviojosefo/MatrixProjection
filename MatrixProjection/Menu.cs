@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace MatrixProjection {
 
         private const string CONSOLE_TITLE = "MatrixProjection";
 
+        private List<string> options;
         private int optionN;
 
         public Menu(int width, int height) {
@@ -22,28 +24,44 @@ namespace MatrixProjection {
             Console.Title = CONSOLE_TITLE;
         }
 
+        // Create menu options
+        public void Setup() {
+
+            options = new List<string> {
+                "Cube",
+                "Quad Pyramid",
+                "Triangular Pyramid",
+                "Engram (Regular Dodecahedron)",
+                "Simple Triangle",
+                "Exit"
+            };
+        }
+
         public void ShowOptions() {
 
+            // Clean the console
             Console.Clear();
 
-            Console.WriteLine("  1.Cube");
-            Console.WriteLine("  2.Quad Pyramid");
-            Console.WriteLine("  3.Triangular Pyramid");
-            Console.WriteLine("  4.Engram (Regular Dodecahedron)");
-            Console.WriteLine("  5.Simple Triangle");
-            Console.WriteLine("  6.Exit");
+            // Get the number of options
+            int maxOptions = options.Count;
 
+            // Print every option (+ its index)
+            for (int i = 0; i < maxOptions; i++)
+                Console.WriteLine($"  {i + 1}." + options[i]);
+
+            // Print 'cursor'
             Console.SetCursorPosition(0, optionN);
             Console.Write('►');
 
+            // Read user input
             switch(Console.ReadKey().Key) {
 
                 case ConsoleKey.UpArrow:
-                    optionN = optionN > 0 ? optionN - 1 : 5;
+                    optionN = optionN > 0 ? optionN - 1 : maxOptions - 1;
                     break;
 
                 case ConsoleKey.DownArrow:
-                    optionN = optionN < 5 ? optionN + 1 : 0;
+                    optionN = optionN < maxOptions - 1 ? optionN + 1 : 0;
                     break;
 
                 case ConsoleKey.Enter:
