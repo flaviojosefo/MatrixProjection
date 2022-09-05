@@ -10,7 +10,7 @@ namespace MatrixProjection {
             //Menu menu = new Menu(120, 80);
             Menu menu = new Menu(Console.LargestWindowWidth, Console.LargestWindowHeight);
             menu.Setup();
-            menu.ShowOptions();
+            menu.DisplayMainOptions();
         }
     }
 }
