@@ -278,6 +278,61 @@ namespace MatrixProjection {
         private void SelectFile(string path) {
 
             // Mesh Importer, scene setter, etc.
+
+            // Clean the console
+            Console.Clear();
+
+            // Check if admin exists
+            using (TextReader reader = File.OpenText(path)) {
+
+                // Skips the first line
+                //string firstLine = reader.ReadLine();
+
+                while (reader.Peek() > -1) {
+
+                    string[] values = reader.ReadLine().Split(' ');
+
+                    if (values[0] == "v") {
+
+                        for (int i = 0; i < values.Length; i++) {
+
+                            // CONVERT TO FLOAT
+                            //Console.Write(float.Parse(values[i], CultureInfo.InvariantCulture));
+
+                            Console.Write(values[i] + (i + 1 != values.Length ? ' ' : '\n'));
+                        }
+
+                    } else if (values[0] == "f") {
+
+                        for (int i = 0; i < values.Length; i++) {
+
+                            // STORE FIRST VALUE
+                            //Console.Write(values[i].Split('/').First() + (i + 1 != values.Length ? ' ' : '\n'));
+
+                            //Console.Write(values[i] + (i + 1 != values.Length ? ' ' : '\n'));
+                        }
+                    }
+                }
+
+                //Console.WriteLine(reader.ReadToEnd());
+
+                reader.Close();
+            }
+
+            Console.WriteLine("\nPress any key to go back...");
+
+            Console.ReadKey();
+
+            /* THE PLAN
+             * 
+             * 1. Save all 'v' into a list (ONLY store the numbers (as floats))
+             * 2. Save all 'f' into a list (ONLY store the first value ('a') from each 'a/b/c' ('a' represents a vertex))
+             * 3. Build triangles based on the vertices (all 'v') and their order (stored on 'f')
+             * 4. Create a mesh with said triangles
+             * 
+             * Notes: OBJ uses right-hand coordinate system (invert the 'x' to fix)
+             *        Vertices are stored in a counter-clockwise order by default (invert triangle's vertices?)
+             */
         }
     }
 }
