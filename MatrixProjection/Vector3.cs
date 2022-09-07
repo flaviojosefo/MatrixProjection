@@ -118,7 +118,7 @@ namespace MatrixProjection {
 
         public void Normalize() { this = Normalized; }
 
-        public override string ToString() => $"({X},{Y},{Z})";
+        public override string ToString() => $"({X}; {Y}; {Z})";
 
         public override int GetHashCode() => base.GetHashCode();
 
