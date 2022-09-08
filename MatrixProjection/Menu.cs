@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
 
 namespace MatrixProjection {
 
@@ -51,6 +49,7 @@ namespace MatrixProjection {
             CreateFilesDirectory();
         }
 
+        // Displays the options on the main menu
         public void DisplayMainOptions(int cursor = 0) {
 
             // Clean the console
@@ -71,10 +70,12 @@ namespace MatrixProjection {
             switch(Console.ReadKey().Key) {
 
                 case ConsoleKey.UpArrow:
+                    // Move the cursor up
                     cursor = cursor > 0 ? cursor - 1 : maxOptions - 1;
                     break;
 
                 case ConsoleKey.DownArrow:
+                    // Move the cursor down
                     cursor = cursor < maxOptions - 1 ? cursor + 1 : 0;
                     break;
 
@@ -86,6 +87,7 @@ namespace MatrixProjection {
             DisplayMainOptions(cursor);
         }
 
+        // Select an option on the main menu
         private void SelectMainOption(int cursor) {
 
             switch (cursor) {
@@ -126,10 +128,12 @@ namespace MatrixProjection {
             switch (Console.ReadKey().Key) {
 
                 case ConsoleKey.UpArrow:
+                    // Move the cursor up
                     cursor = cursor > 0 ? cursor - 1 : maxOptions - 1;
                     break;
 
                 case ConsoleKey.DownArrow:
+                    // Move the cursor down
                     cursor = cursor < maxOptions - 1 ? cursor + 1 : 0;
                     break;
 
@@ -139,7 +143,7 @@ namespace MatrixProjection {
                     if (cursor == maxOptions - 1)
                         return;
 
-                    StartLocalObject(cursor);
+                    LoadLocalObject(cursor);
 
                     break;
             }
@@ -147,35 +151,45 @@ namespace MatrixProjection {
             DisplayLocal(cursor);
         }
 
-        private void StartLocalObject(int cursor) {
+        // Loads a new Scene with objects from this project
+        private void LoadLocalObject(int cursor) {
 
+            // Clean the console
             Console.Clear();
 
+            // The scene to be displayed
             Scene scene = null;
 
+            // Check where the cursor is pointing
             switch (cursor) {
 
                 case 0:
+                    // Create a simple cube
                     scene = new Scene(RenderObject.Create<Cube>());
                     break;
 
                 case 1:
+                    // Create a pyramid with a quad base
                     scene = new Scene(RenderObject.Create<QuadPyramid>());
                     break;
 
                 case 2:
+                    // Create a pyramid with a triangular base
                     scene = new Scene(RenderObject.Create<TriPyramid>());
                     break;
 
                 case 3:
+                    // Create a dodecahedron - the word 'Engram' comes from Destiny 2 ;)
                     scene = new Scene(RenderObject.Create<Engram>());
                     break;
 
                 case 4:
+                    // Create a simple triangle (mostly used for baseline testing)
                     scene = new Scene(RenderObject.Create<SimpleTri>());
                     break;
             }
 
+            // Initiate the scene
             scene?.Start();
             scene?.Run();
         }
@@ -222,7 +236,7 @@ namespace MatrixProjection {
 
                 // Print every file name (+ its index)
                 for (int i = 0; i < filesAmount; i++)
-                    Console.WriteLine($"  {i + 1}." + paths[i].Split('\\').Last()/*.Split('.').First()*/);
+                    Console.WriteLine($"  {i + 1}." + paths[i].Split('\\').Last());
 
             } else {
 
@@ -244,10 +258,12 @@ namespace MatrixProjection {
             switch (Console.ReadKey().Key) {
 
                 case ConsoleKey.UpArrow:
+                    // Move the cursor up
                     cursor = cursor > 0 ? cursor - 1 : filesAmount;
                     break;
 
                 case ConsoleKey.DownArrow:
+                    // Move the cursor down
                     cursor = cursor < filesAmount ? cursor + 1 : 0;
                     break;
 
@@ -264,7 +280,7 @@ namespace MatrixProjection {
                         // Get the file's index
                         if (cursor == i) {
 
-                            SelectFile(paths[i]);
+                            LoadFile(paths[i]);
                             break;
                         }
                     }
@@ -275,64 +291,24 @@ namespace MatrixProjection {
             DisplayFiles(paths, cursor);
         }
 
-        private void SelectFile(string path) {
-
-            // Mesh Importer, scene setter, etc.
+        // Loads a new Scene with objects generated from an external file
+        private void LoadFile(string path) {
 
             // Clean the console
             Console.Clear();
 
-            // Check if admin exists
-            using (TextReader reader = File.OpenText(path)) {
+            // Generate a mesh by reading the supplied '.obj' file
+            Mesh generated = CustomMesh.GenerateFromOBJ(path);
 
-                // Skips the first line
-                //string firstLine = reader.ReadLine();
+            // Create a RenderObject with the prior mesh
+            RenderObject rObject = RenderObject.Create(generated);
 
-                while (reader.Peek() > -1) {
+            // The scene to be displayed
+            Scene scene = new Scene(rObject);
 
-                    string[] values = reader.ReadLine().Split(' ');
-
-                    if (values[0] == "v") {
-
-                        for (int i = 0; i < values.Length; i++) {
-
-                            // CONVERT TO FLOAT
-                            //Console.Write(float.Parse(values[i], CultureInfo.InvariantCulture));
-
-                            Console.Write(values[i] + (i + 1 != values.Length ? ' ' : '\n'));
-                        }
-
-                    } else if (values[0] == "f") {
-
-                        for (int i = 0; i < values.Length; i++) {
-
-                            // STORE FIRST VALUE
-                            //Console.Write(values[i].Split('/').First() + (i + 1 != values.Length ? ' ' : '\n'));
-
-                            //Console.Write(values[i] + (i + 1 != values.Length ? ' ' : '\n'));
-                        }
-                    }
-                }
-
-                //Console.WriteLine(reader.ReadToEnd());
-
-                reader.Close();
-            }
-
-            Console.WriteLine("\nPress any key to go back...");
-
-            Console.ReadKey();
-
-            /* THE PLAN
-             * 
-             * 1. Save all 'v' into a list (ONLY store the numbers (as floats))
-             * 2. Save all 'f' into a list (ONLY store the first value ('a') from each 'a/b/c' ('a' represents a vertex))
-             * 3. Build triangles based on the vertices (all 'v') and their order (stored on 'f')
-             * 4. Create a mesh with said triangles
-             * 
-             * Notes: OBJ uses right-hand coordinate system (invert the 'x' to fix)
-             *        Vertices are stored in a counter-clockwise order by default (invert triangle's vertices?)
-             */
+            // Initiate the scene
+            scene.Start();
+            scene.Run();
         }
     }
 }
