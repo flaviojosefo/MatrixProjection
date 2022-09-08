@@ -71,7 +71,12 @@ namespace MatrixProjection {
             return Mat4x4.MatMul(Mat4x4.MatMul(scaling, rotation), translation);
         }
 
+        // Create a RenderObject based on a generic (project based) mesh
         public static RenderObject Create<T>() where T : Mesh, new() => 
             new RenderObject { Mesh = new T() };
+
+        // Create a RenderObject based on a referenced (external) mesh
+        public static RenderObject Create(Mesh mesh) =>
+            new RenderObject { Mesh = mesh };
     }
 }

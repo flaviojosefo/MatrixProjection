@@ -21,7 +21,7 @@ namespace MatrixProjection {
         //    Polygons[firstEmpty] = quad;
         //}
 
-        // Clockwise tri creation
+        // Triangles need to be supplied on a CLOCKWISE order
         protected void CreateTri(Vector3 v1, Vector3 v2, Vector3 v3) {
 
             Vector3[] tri = new Vector3[3];
