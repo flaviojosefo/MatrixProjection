@@ -54,7 +54,7 @@ namespace MatrixProjection {
                                                        vertices[int.Parse(values[3].Split('/').First()) - 1],
                                                        vertices[int.Parse(values[2].Split('/').First()) - 1]));
 
-                            // Check if the face is a QUAD
+                        // Check if the face is a QUAD
                         } else if (faceVertices == 4) {
 
                             // Divide the quad into 2 triangles

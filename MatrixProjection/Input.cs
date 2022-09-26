@@ -2,6 +2,7 @@
 
 namespace MatrixProjection {
 
+    // Or 'InputHandler'?
     public class Input {
 
         private Camera camera;

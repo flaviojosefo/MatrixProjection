@@ -111,7 +111,7 @@ namespace MatrixProjection {
                 }
 
                 // Display current time and fps
-                //Console.Write((int)t + " | " + fps);
+                Console.Write((int)t + " | " + fps);
             }
         }
 

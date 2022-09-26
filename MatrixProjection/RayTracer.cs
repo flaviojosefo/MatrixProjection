@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MatrixProjection {
 
-    public class RayTracer : IRenderer {
+    public sealed class RayTracer : IRenderer {
 
         public RenderMode RenderMode { get; set; } = RenderMode.Solid;
         public List<Fragment> Fragments { get; } = new List<Fragment>();
@@ -22,6 +23,8 @@ namespace MatrixProjection {
             height = Console.WindowHeight - 1;
         }
 
+        // https://stackoverflow.com/questions/4190949/create-multiple-threads-and-wait-for-all-of-them-to-complete
+        // https://stackoverflow.com/questions/4130194/what-is-the-difference-between-task-and-thread
         public void Render(RenderObject rObject) {
 
             Fragments.Clear();
@@ -49,8 +52,8 @@ namespace MatrixProjection {
             // Cache the rays' origin
             Vector3 origin = camera.Position;
 
-            for (int y = 0; y < height; y++) { 
-            
+            for (int y = 0; y < height; y++) {
+
                 for (int x = 0; x < width; x++) {
 
                     Vector3 pRay = CreatePrimaryRay(origin, new Vector3(x, y), cameraMatrix);
@@ -60,6 +63,59 @@ namespace MatrixProjection {
                         if (Intersects(origin, pRay, updatedTri[i], out Vector3 hit)) {
 
                             Fragments.Add(new Fragment(new Vector3(x, y), ShadeChar.Full));
+                        }
+                    }
+                }
+            }
+
+            // ##### UNCOMMENT THIS TO PARALLELIZE RAY TRACING #####
+
+            //List<Fragment>[] frags = new List<Fragment>[4];
+
+            //Parallel.Invoke(
+            //    () => {
+            //        RayTrace((0,0.5f), (0,0.5f), origin, cameraMatrix, updatedTri, out frags[0]);
+            //    },
+
+            //    () => {
+            //        RayTrace((0, 0.5f), (0.5f, 1), origin, cameraMatrix, updatedTri, out frags[1]);
+            //    },
+
+            //    () => {
+            //        RayTrace((0.5f, 1), (0, 0.5f), origin, cameraMatrix, updatedTri, out frags[2]);
+            //    },
+
+            //    () => {
+            //        RayTrace((0.5f, 1), (0.5f, 1), origin, cameraMatrix, updatedTri, out frags[3]);
+            //    }
+            //);
+
+            //for (int i = 0; i < frags.Length; i++) {
+
+            //    foreach(Fragment f in frags[i]) {
+
+            //        Fragments.Add(f);
+            //    }
+            //}
+
+            // #####################################################
+        }
+
+        private void RayTrace((float, float) heightPartition, (float, float) widthPartition, Vector3 origin, Mat4x4 cameraMatrix, Triangle[] updatedTri, out List<Fragment> frags) {
+
+            frags = new List<Fragment>();
+
+            for (int y = (int)(height * heightPartition.Item1); y < (int)(height * heightPartition.Item2); y++) {
+
+                for (int x = (int)(width * widthPartition.Item1); x < (int)(width * widthPartition.Item2); x++) {
+
+                    Vector3 pRay = CreatePrimaryRay(origin, new Vector3(x, y), cameraMatrix);
+
+                    for (int i = 0; i < updatedTri.Length; i++) {
+
+                        if (Intersects(origin, pRay, updatedTri[i], out Vector3 hit)) {
+
+                            frags.Add(new Fragment(new Vector3(x, y), ShadeChar.Full));
                         }
                     }
                 }
